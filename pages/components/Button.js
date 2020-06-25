@@ -15,15 +15,40 @@ export default function CustomButton({ type }) {
   }, [data]);
 
   const fetchData = async () => {
-    const req = await fetch(
-      type === "auth" ? process.env.userAuth : process.env.userCrud
-    );
-    const newData = await req.json();
-    return setData(newData);
+    try {
+      console.log("1");
+      const req = await fetch("localhost:8080");
+      console.log(req);
+      const newData = await req.json();
+      return setData(newData);
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      console.log("2");
+      const req = await fetch("node_auth:8080");
+      console.log(req);
+      const newData = await req.json();
+      return setData(newData);
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      console.log("3");
+      const req = await fetch("node_auth");
+      console.log(req);
+      const newData = await req.json();
+      return setData(newData);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleClick = (event) => {
     event.preventDefault();
+    console.log("CLICKED!");
     fetchData();
   };
 
