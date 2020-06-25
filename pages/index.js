@@ -1,11 +1,6 @@
 import Head from "next/head";
-import styled from "styled-components";
-import Button from "react-bootstrap/Button";
 
-const CustomBtn = styled(Button)`
-  font-size: 50px;
-  color: ${({ theme }) => theme.colors.primary};
-`;
+import CustomBtn from "./components/Button";
 
 export default function Home() {
   return (
@@ -18,7 +13,8 @@ export default function Home() {
       <main>
         <div>
           <h1>Main content</h1>
-          <CustomBtn className="hello-world-btn">Hello World</CustomBtn>
+          <CustomBtn type="auth" />
+          <CustomBtn type="crud" />
         </div>
       </main>
 
