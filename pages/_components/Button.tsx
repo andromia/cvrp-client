@@ -20,8 +20,8 @@ const CustomButton = (props: Props): ReactElement => {
 
     const fetchData = async () => {
         let url = "";
-        if (process?.env?.userAuth) url = process.env.userAuth;
-        else if (process?.env?.userCrud) url = process.env.userCrud;
+        if (props.type === "auth" && process?.env?.userAuth) url = process.env.userAuth;
+        else if (props.type === "crud" && process?.env?.userCrud) url = process.env.userCrud;
 
         const req = await fetch(url);
         const newData = await req.json();
