@@ -1,19 +1,21 @@
+import React, { ReactElement } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ThemeProvider } from "styled-components";
 
 const theme = {
-  colors: {
-    primary: "black",
-  },
+    colors: {
+        primary: "black"
+    }
 };
 
-function MyApp({ Component, pageProps }) {
-  return (
-    <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
-    </ThemeProvider>
-  );
-}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const MyApp = ({ Component, pageProps }): ReactElement => {
+    return (
+        <ThemeProvider theme={theme}>
+            <Component {...pageProps} />
+        </ThemeProvider>
+    );
+};
 
 // Only uncomment this method if you have blocking data requirements for
 // every single page in your application. This disables the ability to
