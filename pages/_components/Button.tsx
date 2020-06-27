@@ -12,7 +12,6 @@ const CustomBtn = styled(Button)`
 `;
 
 const CustomButton = (props: Props): ReactElement => {
-    console.log(props);
     const [data, setData] = useState(null);
 
     useEffect(() => {
