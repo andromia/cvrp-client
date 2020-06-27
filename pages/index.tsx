@@ -15,7 +15,7 @@ const Home: React.FunctionComponent = (props: any) => {
                 <div>
                     <h1>Main content</h1>
                     <CustomBtn type="auth" />
-                    <CustomBtn type="" />
+                    <CustomBtn type="crud" />
                 </div>
             </main>
 
