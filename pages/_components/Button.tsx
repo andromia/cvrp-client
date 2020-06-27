@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Button from "react-bootstrap/Button";
 
 type Props = {
-    type: string;
+    type?: string;
 };
 
 const CustomBtn = styled(Button)`
