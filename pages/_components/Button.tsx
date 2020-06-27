@@ -2,9 +2,9 @@ import React, { useState, useEffect, ReactElement } from "react";
 import styled from "styled-components";
 import Button from "react-bootstrap/Button";
 
-type Props = {
-    type?: string;
-};
+interface Props {
+    type: string | "";
+}
 
 const CustomBtn = styled(Button)`
     font-size: 50px;
@@ -12,6 +12,7 @@ const CustomBtn = styled(Button)`
 `;
 
 const CustomButton = (props: Props): ReactElement => {
+    console.log(props);
     const [data, setData] = useState(null);
 
     useEffect(() => {
