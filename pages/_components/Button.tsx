@@ -36,7 +36,7 @@ const CustomButton = (props: Props): ReactElement => {
     return (
         <div>
             <CustomBtn className="my-5" onClick={handleClick}>
-                {props.type === "auth" ? "USER AUTH" : "USER CRUD"}
+                {props.type === "auth" ? "USER AUTH!" : "USER CRUD"}
             </CustomBtn>
         </div>
     );

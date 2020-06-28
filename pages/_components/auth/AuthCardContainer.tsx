@@ -24,7 +24,7 @@ const StyledCard = styled(Card)`
 `;
 
 interface Props {
-    children: ReactElement;
+    children: Array<false | ReactElement>;
 }
 
 const AuthCardContainer = (props: Props): ReactElement => {

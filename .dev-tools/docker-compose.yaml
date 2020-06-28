@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+    react_nextjs_dev:
+        image: react_nextjs_dev:1.00
+        container_name: react_nextjs_dev
+        restart: unless-stopped
+        command: yarn dev
+        build:
+            context: ../
+            dockerfile: .dev-tools/Dockerfile
+        ports:
+            - "3000:3000"
+        volumes:
+            - ..:/usr/src/app
