@@ -1,24 +1,43 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 
+// Bootstrap
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+
 // Components
-import MiddleContainer from "../_components/styled-common/MiddleContainer";
+import Container from "../_components/styled-common/Container";
 import AuthCardContainer from "../_components/auth/AuthCardContainer";
 import LoginCard from "../_components/auth/LoginCard";
 import RegisterCard from "../_components/auth/RegisterCard";
+import Logo from "../_components/images/Logo";
 
-const Login = (): ReactElement => {
+const Type = (): ReactElement => {
     const router = useRouter();
     const { type } = router.query;
 
     return (
-        <MiddleContainer>
-            <AuthCardContainer>
-                {type === "login" && <LoginCard />}
-                {type === "register" && <RegisterCard />}
-            </AuthCardContainer>
-        </MiddleContainer>
+        <Container middle>
+            <Row className="d-flex flex-column w-100 m-0 pb-5">
+                <Col className="d-flex justify-content-center align-middle pt-3 mb-4" xs="auto" sm="auto" md="auto">
+                    <Row className="d-flex flex-column justify-content-center align-middle">
+                        <Col className="d-flex justify-content-center">
+                            <Logo />
+                        </Col>
+                        <Col>
+                            <h3 className="mb-0">Model Design Studio</h3>
+                        </Col>
+                    </Row>
+                </Col>
+                <Col className="d-flex justify-content-center align-middle mt-2">
+                    <AuthCardContainer>
+                        {type === "login" && <LoginCard />}
+                        {type === "register" && <RegisterCard />}
+                    </AuthCardContainer>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 
-export default Login;
+export default Type;

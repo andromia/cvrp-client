@@ -1,5 +1,7 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import useSWR, { mutate } from "swr";
+import axios from "axios";
 
 // Bootstrap
 import Button from "react-bootstrap/Button";
@@ -7,20 +9,66 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 
-const LoginCard = (): ReactElement => {
+interface Props {
+    USER_AUTH_URL: string;
+    USER_CRUD_URL: string;
+}
+
+const LoginCard = (props: Props): ReactElement => {
+    const [isFormSubmit, setFormSubmit] = useState({ submit: false, data: { username: "", password: "" } });
+    const [envobj, setEnvObj] = useState({ USER_AUTH_URL: "", USER_CRUD_URL: "" });
+
+    const userInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
+
     const router = useRouter();
     const toggleRegister = () => router.push("/auth/register");
 
+    useEffect(() => {
+        if (process.env.NODE_ENV === "development") {
+            if (process?.env?.dev) {
+                setEnvObj({
+                    USER_AUTH_URL: process.env.dev.USER_AUTH_URL,
+                    USER_CRUD_URL: process.env.dev.USER_CRUD_URL
+                });
+            }
+        } else {
+            if (process?.env?.prod) {
+                setEnvObj({
+                    USER_AUTH_URL: process.env.prod.USER_AUTH_URL,
+                    USER_CRUD_URL: process.env.prod.USER_CRUD_URL
+                });
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (isFormSubmit.submit) {
+            const data = { username: isFormSubmit.data.username, password: isFormSubmit.data.password };
+            console.log(data);
+            axios.post(envobj.USER_AUTH_URL + "auth/login", data).then(res => {
+                console.log(res);
+            });
+        }
+    }, [isFormSubmit.submit]);
+
+    const handleLogin = e => {
+        e.preventDefault();
+        const username = userInputRef?.current?.value || "";
+        const password = passwordInputRef?.current?.value || "";
+        setFormSubmit({ submit: true, data: { username, password } });
+    };
+
     return (
         <>
-            <Form>
+            <Form onSubmit={handleLogin}>
                 <Row className="d-flex flex-column">
                     <Col>
                         <Form.Group>
                             <Form.Label className="m-0" column="lg" htmlFor="user-input">
                                 Username
                             </Form.Label>
-                            <Form.Control type="text" id="user-input" size="lg" placeholder="Username" />
+                            <Form.Control type="text" id="user-input" size="lg" placeholder="Username" ref={userInputRef} />
                         </Form.Group>
                     </Col>
                     <Col>
@@ -28,16 +76,18 @@ const LoginCard = (): ReactElement => {
                             <Form.Label className="m-0" column="lg" htmlFor="password-input">
                                 Password
                             </Form.Label>
-                            <Form.Control id="password-input" type="password" size="lg" placeholder="Password" />
+                            <Form.Control id="password-input" type="password" size="lg" placeholder="Password" ref={passwordInputRef} />
                         </Form.Group>
                     </Col>
                     <Col>
                         <Row className="btn-row-grp d-flex justify-content-between">
-                            <Col className="btn-col" lg="5">
+                            <Col className="btn-col">
                                 <Button className="w-100">Guest</Button>
                             </Col>
-                            <Col className="btn-col" lg="5">
-                                <Button className="w-100">Login</Button>
+                            <Col className="btn-col">
+                                <Button type="submit" className="w-100">
+                                    Login
+                                </Button>
                             </Col>
                         </Row>
                     </Col>

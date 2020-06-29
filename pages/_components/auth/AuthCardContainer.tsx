@@ -7,19 +7,14 @@ import Card from "react-bootstrap/Card";
 // Styled
 const StyledCard = styled(Card)`
     @media (max-width: 1099px) {
-        min-height: 50%;
-        width: 95%;
-        margin-bottom: 10%;
+        width: 100%;
     }
 
     @media (min-width: 1100px) {
-        min-height: 50%;
-        width: 50%;
-        margin-bottom: 15%;
-    }
-
-    .card-body {
-        padding: 66px;
+        width: 450px;
+        .card-body {
+            padding: 50px;
+        }
     }
 `;
 

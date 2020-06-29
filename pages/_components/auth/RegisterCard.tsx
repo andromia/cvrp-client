@@ -41,10 +41,10 @@ const LoginCard = (): ReactElement => {
                     </Col>
                     <Col>
                         <Row className="btn-row-grp d-flex justify-content-between">
-                            <Col className="btn-col" lg="5">
+                            <Col className="btn-col">
                                 <Button className="w-100">Guest</Button>
                             </Col>
-                            <Col className="btn-col" lg="5">
+                            <Col className="btn-col">
                                 <Button className="w-100">Login</Button>
                             </Col>
                         </Row>
