@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 
-import CustomBtn from "./_components/Button";
+import CustomBtn from "../components/Button";
 
 const Home: React.FunctionComponent = (props: any) => {
     return (

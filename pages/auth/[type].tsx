@@ -6,11 +6,11 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 // Components
-import Container from "../_components/styled-common/Container";
-import AuthCardContainer from "../_components/auth/AuthCardContainer";
-import LoginCard from "../_components/auth/LoginCard";
-import RegisterCard from "../_components/auth/RegisterCard";
-import Logo from "../_components/images/Logo";
+import Container from "../../components/styled-common/Container";
+import AuthCardContainer from "../../components/auth/AuthCardContainer";
+import LoginCard from "../../components/auth/LoginCard";
+import RegisterCard from "../../components/auth/RegisterCard";
+import Logo from "../../components/images/Logo";
 
 const Type = (): ReactElement => {
     const router = useRouter();

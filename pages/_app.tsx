@@ -1,6 +1,9 @@
-import React, { ReactElement } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { FC } from "react";
+import { AppProps } from "next/app";
 import { ThemeProvider } from "styled-components";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+// import { wrapper } from "../components/_store";
 
 const theme = {
     colors: {
@@ -8,8 +11,7 @@ const theme = {
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const MyApp = ({ Component, pageProps }): ReactElement => {
+const App: FC<AppProps> = ({ Component, pageProps }) => {
     return (
         <ThemeProvider theme={theme}>
             <Component {...pageProps} />
@@ -29,4 +31,4 @@ const MyApp = ({ Component, pageProps }): ReactElement => {
 //   return { ...appProps }
 // }
 
-export default MyApp;
+export default App;
