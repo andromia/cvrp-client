@@ -156,7 +156,7 @@ const LoginCard = (): ReactElement => {
                 </Col>
                 <Col className="mb-2">
                     <a href="http://localhost:8080/auth/github/" className="w-100">
-                        Sign in with GitHub
+                        <Button className="w-100">Sign in with GitHub</Button>
                     </a>
                 </Col>
             </Row>
