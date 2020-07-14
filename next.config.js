@@ -7,7 +7,8 @@ module.exports = {
     env: {
         dev: {
             USER_AUTH_URL: "http://localhost:8080/",
-            USER_CRUD_URL: "http://localhost:8081/"
+            USER_CRUD_URL: "http://localhost:8081/",
+            GOOGLE_MAPS_KEY: "AIzaSyDCXlrXJeRe3pUbGMXpsh8Z2GVMZA2jVW8"
         },
         prod: {
             USER_AUTH_URL: "http://localhost:8080/",
