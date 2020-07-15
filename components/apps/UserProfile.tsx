@@ -12,14 +12,14 @@ const UserProfile = (props: Props) => {
             <Profile />
             <hr />
             <h5>@{props.username}</h5>
-            <p>My name is Phil. I love DevOps, Full-Stack, and React Engineering. Please considering following my profile :-)</p>
+            <p>My name is [TODO]. I love TODOing. Please consider following my profile hehe.</p>
             <h5>Skills</h5>
             <p>
                 <ul>
-                    <li>Docker</li>
-                    <li>React</li>
-                    <li>AWS</li>
-                    <li>TypeScript</li>
+                    <li>This</li>
+                    <li>That</li>
+                    <li>Other this</li>
+                    <li>And that</li>
                 </ul>
             </p>
         </div>
