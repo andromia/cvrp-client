@@ -6,8 +6,8 @@ import AppIcon from "../images/AppIcon";
 
 const CustomContainer = styled.div`
     position: absolute;
-    left: -20px;
-    top: -20px;
+    left: -5px;
+    top: -5px;
 `;
 
 const CardIcon = () => {

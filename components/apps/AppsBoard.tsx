@@ -44,6 +44,8 @@ const AppsBoard = () => {
                     <AppsCardWithIcon />
                 </Col>
             </Row>
+            
+            <a href="https://www.freepik.com/free-photos-vectors/technology">Button icon by rawpixel.com - www.freepik.com</a>
         </div>
     );
 };
