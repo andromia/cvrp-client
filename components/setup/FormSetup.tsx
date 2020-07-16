@@ -11,23 +11,33 @@ import CustomMarker from "../google-maps/CustomMarker";
 import GoogleMaps from "../google-maps/GoogleMaps";
 import Button from "react-bootstrap/Button";
 
-const FormSetup = () => {
-    const [fileName, setFileName] = useState("File Input");
 
+const assert = require('assert');
+
+function checkCsvData(csvData) {
+    assert(csvData); // TODO
+}
+
+const FormSetup = () => {
+    // TODO: const?
+    const [fileName, setFileName] = useState("File Input");
+    
     const onFileSubmit = event => {
-        const newFileName = event.target.value.split("\\").splice(-1)[0];
-        setFileName(newFileName);
+        setFileName(event.target.value.split("\\").splice(-1)[0]);
     };
 
+    // handle api integration
     const onCreateSubmit = event => {
         event.preventDefault();
 
         Papa.parse(event.target[2].files[0], {
             header: true,
             complete: function(results) {
-                console.log(results);
+                checkCsvData(results);
+                console.log("demand data", results);
             }
         });
+        
     };
 
     return (
