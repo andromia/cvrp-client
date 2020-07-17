@@ -8,7 +8,7 @@ import Container from "react-bootstrap/Container";
 import Search from "../../components/setup/Search";
 import FormSetup from "../../components/setup/FormSetup";
 
-const CVRP = () => {
+const VRP = () => {
     return (
         <Container>
             <Row className="d-flex flex-column justify-content-center align-items-center w-75 mx-auto">
@@ -23,4 +23,4 @@ const CVRP = () => {
     );
 };
 
-export default CVRP;
+export default VRP;
