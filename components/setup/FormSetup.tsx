@@ -18,9 +18,17 @@ function checkCsvData(csvData) {
     assert(csvData); // TODO
 }
 
+function checkNum(val) {
+    assert(Number(val));
+}
+
+function checkUnit(unit, data) {
+    assert(data[0].hasOwnProperty(unit));
+}
+
 const FormSetup = () => {
     // TODO: const?
-    const [fileName, setFileName] = useState("File Input");
+    const [fileName, setFileName] = useState("demand file");
     
     const onFileSubmit = event => {
         setFileName(event.target.value.split("\\").splice(-1)[0]);
@@ -30,14 +38,31 @@ const FormSetup = () => {
     const onCreateSubmit = event => {
         event.preventDefault();
 
-        Papa.parse(event.target[2].files[0], {
+        // TODO: figure out how to properly ref
+        const originLat = event.target[0].value;
+        const originLon = event.target[1].value;
+        const vehicleCap = event.target[2].value;
+        const unit = event.target[3].value;
+        const demandData = event.target[10].files[0]
+
+        checkNum(originLat);
+        checkNum(originLon);
+        checkNum(vehicleCap);
+
+        console.log("origin lat", originLat);
+        console.log("origin lon", originLon);
+        console.log("vehicle cap", vehicleCap);
+        console.log("unit", unit);
+        
+        Papa.parse(demandData, {
             header: true,
             complete: function(results) {
                 checkCsvData(results);
+                checkUnit(unit, results.data);
+
                 console.log("demand data", results);
             }
         });
-        
     };
 
     return (
@@ -53,10 +78,10 @@ const FormSetup = () => {
                                 <Col>
                                     <Row>
                                         <Col>
-                                            <FormControl className="d-inline-flex" placeholder="Lat." aria-label="Lat." />
+                                            <FormControl id="origin-lat" className="d-inline-flex" placeholder="lat." aria-label="Lat." />
                                         </Col>
                                         <Col>
-                                            <FormControl className="d-inline-flex" placeholder="Lon." aria-label="Lon." />
+                                            <FormControl id="origin-lon" className="d-inline-flex" placeholder="lon." aria-label="Lon." />
                                         </Col>
                                     </Row>
                                 </Col>
@@ -65,10 +90,17 @@ const FormSetup = () => {
                         <Col lg="6">
                             <Row className="d-flex flex-column">
                                 <Col className="pb-3">
-                                    <div>Demand</div>
+                                    <div>Vehicle</div>
                                 </Col>
                                 <Col>
-                                    <Form.File id="custom-file" label={fileName} custom onChange={onFileSubmit} />
+                                    <Row>
+                                        <Col>
+                                            <FormControl id="max-vehicle-cap" className="d-inline-flex" placeholder="capacity" aria-label="capacity" />
+                                        </Col>
+                                        <Col>
+                                            <FormControl id="unit" className="d-inline-flex" placeholder="unit" aria-label="unit" />
+                                        </Col>
+                                    </Row>
                                 </Col>
                             </Row>
                         </Col>
@@ -79,6 +111,9 @@ const FormSetup = () => {
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
+                        <Col lg="8">
+                            <Form.File id="custom-file" label={fileName} custom onChange={onFileSubmit} />
+                        </Col>
                         <Col lg="auto">
                             <Button type="submit">Create</Button>
                         </Col>
