@@ -39,28 +39,26 @@ const FormSetup = () => {
         event.preventDefault();
 
         // TODO: figure out how to properly ref
-        const originLat = event.target[0].value;
-        const originLon = event.target[1].value;
-        const vehicleCap = event.target[2].value;
-        const unit = event.target[3].value;
-        const demandData = event.target[10].files[0]
+        let dataObj = {
+            origin_lat: event.target[0].value,
+            origin_lon: event.target[1].value,
+            vechile_max_capacity_quantity: event.target[2].value,
+            unit: event.target[3].value,
+            demand: []
+        }
 
-        checkNum(originLat);
-        checkNum(originLon);
-        checkNum(vehicleCap);
-
-        console.log("origin lat", originLat);
-        console.log("origin lon", originLon);
-        console.log("vehicle cap", vehicleCap);
-        console.log("unit", unit);
+        checkNum(dataObj.origin_lat);
+        checkNum(dataObj.origin_lon);
+        checkNum(dataObj.vechile_max_capacity_quantity);
         
-        Papa.parse(demandData, {
+        Papa.parse(event.target[10].files[0], {
             header: true,
             complete: function(results) {
                 checkCsvData(results);
-                checkUnit(unit, results.data);
+                checkUnit(dataObj.unit, results.data);
 
-                console.log("demand data", results);
+                dataObj.demand = results.data;
+                console.log("data object", dataObj);
             }
         });
     };
