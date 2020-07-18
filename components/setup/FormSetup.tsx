@@ -13,6 +13,7 @@ import Button from "react-bootstrap/Button";
 
 
 const assert = require('assert');
+const axios = require('axios');
 
 function checkCsvData(csvData) {
     assert(csvData); // TODO
@@ -24,6 +25,16 @@ function checkNum(val) {
 
 function checkUnit(unit, data) {
     assert(data[0].hasOwnProperty(unit));
+}
+
+function getVrpSolution(data) {
+    axios.post(process.env.dev.VRP_RPC_URL, data)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 }
 
 const FormSetup = () => {
@@ -40,16 +51,17 @@ const FormSetup = () => {
 
         // TODO: figure out how to properly ref
         let dataObj = {
-            origin_lat: event.target[0].value,
-            origin_lon: event.target[1].value,
-            vechile_max_capacity_quantity: event.target[2].value,
+            origin_latitude: event.target[0].value,
+            origin_longitude: event.target[1].value,
+            vehicle_max_capacity_quantity: event.target[2].value,
+            vehicle_definitions: [],
             unit: event.target[3].value,
-            demand: []
+            demand: [],
         }
 
-        checkNum(dataObj.origin_lat);
-        checkNum(dataObj.origin_lon);
-        checkNum(dataObj.vechile_max_capacity_quantity);
+        checkNum(dataObj.origin_latitude);
+        checkNum(dataObj.origin_latitude);
+        checkNum(dataObj.vehicle_max_capacity_quantity);
         
         Papa.parse(event.target[10].files[0], {
             header: true,
@@ -59,6 +71,8 @@ const FormSetup = () => {
 
                 dataObj.demand = results.data;
                 console.log("data object", dataObj);
+
+                getVrpSolution(dataObj);
             }
         });
     };

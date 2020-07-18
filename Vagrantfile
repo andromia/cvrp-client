@@ -31,10 +31,7 @@ Vagrant.configure(2) do |config|
     # vagrant plugin install vagrant-docker-compose
     config.vm.provision :docker_compose
 
-    config.vm.network :forwarded_port, guest: 80, host: 80
     config.vm.network :forwarded_port, guest: 3000, host: 3000
-  
-    config.ssh.forward_agent = true
   
     config.vm.provision "shell", inline: <<-SHELL
       apt-get update -y
@@ -44,6 +41,7 @@ Vagrant.configure(2) do |config|
       curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
       echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
       sudo apt-get -y update && sudo apt-get -y install yarn
+      yarn install
     SHELL
 
     end
