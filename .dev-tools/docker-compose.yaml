@@ -11,3 +11,6 @@ services:
             dockerfile: .dev-tools/Dockerfile
         ports:
             - "3000:3000"
+
+        volumes:
+            - ..:/usr/src/app
