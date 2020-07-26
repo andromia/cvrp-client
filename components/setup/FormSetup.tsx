@@ -7,8 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import CustomMarker from "../google-maps/CustomMarker";
-import GoogleMaps from "../google-maps/GoogleMaps";
+import OriginMap from "../maps/Origin";
 import Button from "react-bootstrap/Button";
 
 
@@ -119,7 +118,7 @@ const FormSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <GoogleMaps />
+                            <OriginMap />
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
