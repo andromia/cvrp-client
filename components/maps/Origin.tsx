@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 
 const checkMarkers = (markers) => {
     /** TODO */
-    console.lost("markers", markers);
+    console.log("markers", markers);
 }
 
 const getMapCenter = (markers) => {
@@ -25,6 +25,8 @@ const getMapCenter = (markers) => {
 }
 
 const drawMap = (svgRef, markers) => {
+    checkMarkers(markers);
+
     var height = 300;
     var width = 600;
     var margin = {top: 50, right:20, bottom: 40, left: 40};
