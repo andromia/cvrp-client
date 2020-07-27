@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Papa from "papaparse";
+import * as GeoTypes from "../enums/geo";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
@@ -14,19 +15,27 @@ import Button from "react-bootstrap/Button";
 const assert = require('assert');
 const axios = require('axios');
 
-function checkCsvData(csvData) {
+const checkCsvData = (csvData: Object) => {
     assert(csvData); // TODO
 }
 
-function checkNum(val) {
+const isContiguousUSA = (lat: Number, lon: Number) => {
+    if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) { 
+        return true; 
+    } else { 
+        return false; 
+    }
+}
+
+const checkNum = (val: Number) => {
     assert(Number(val));
 }
 
-function checkUnit(unit, data) {
+const checkUnit = (unit: String, data: any) => {
     assert(data[0].hasOwnProperty(unit));
 }
 
-function getVrpSolution(data) {
+const getVrpSolution = (data: any) => {
     axios.post(process.env.dev.VRP_RPC_URL, data)
       .then(function (response) {
         console.log(response);
@@ -39,6 +48,19 @@ function getVrpSolution(data) {
 const FormSetup = () => {
     // TODO: const?
     const [fileName, setFileName] = useState("demand file");
+    const latRef = useRef<HTMLInputElement>(null);
+    const lonRef = useRef<HTMLInputElement>(null);
+
+    const onGeoInputUpdate = event => {
+        // NOTE: limiting to contiguous usa for MVP
+        const lat = latRef.current?.value || null;
+        const lon = lonRef.current?.value || null;
+
+        if (isContiguousUSA(lat, lon)) {
+            console.log("lat: " + lat + " lon: " + lon);
+            // TODO: update state to trigger map update (?)
+        }
+    };
     
     const onFileSubmit = event => {
         setFileName(event.target.value.split("\\").splice(-1)[0]);
@@ -89,10 +111,10 @@ const FormSetup = () => {
                                 <Col>
                                     <Row>
                                         <Col>
-                                            <FormControl id="origin-lat" className="d-inline-flex" placeholder="lat." aria-label="Lat." />
+                                            <FormControl id="origin-lat" ref={latRef} className="d-inline-flex" placeholder="lat." aria-label="Lat." onChange={onGeoInputUpdate}/>
                                         </Col>
                                         <Col>
-                                            <FormControl id="origin-lon" className="d-inline-flex" placeholder="lon." aria-label="Lon." />
+                                            <FormControl id="origin-lon" ref={lonRef} className="d-inline-flex" placeholder="lon." aria-label="Lon." onChange={onGeoInputUpdate}/>
                                         </Col>
                                     </Row>
                                 </Col>

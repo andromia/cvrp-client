@@ -1,13 +1,9 @@
-import React, { Component, useRef } from 'react';
-import * as d3 from 'd3';
+import React, { Component, useRef } from "react";
+import * as d3 from "d3"; // TODO: optimize d3
+import * as GeoTypes from "../enums/geo";
 
 
-const checkMarkers = (markers) => {
-    /** TODO */
-    console.log("markers", markers);
-}
-
-const getMapCenter = (markers) => {
+const getMapCenter = (markers: any) => {
     /**
      * Calculates average of coordinates and returns
      * as list [longitude, latitude]
@@ -24,7 +20,8 @@ const getMapCenter = (markers) => {
     return center;
 }
 
-const drawMap = (svgRef, markers) => {
+const drawMap = (svgRef: React.RefObject<SVGElement>, markers: any) => {
+
     const svg = d3.select(svgRef),
         margin = {top: 20, right: 20, bottom: 40, left: 200},
         width = parseInt(svg.attr("width")),
