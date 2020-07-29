@@ -107,21 +107,22 @@ const OriginMap = (props) => {
 
     // TODO: relative margins and translations
     const margin = {top: 20, right: 20, bottom: 0, left: 175},
-        zoom = 625,
-        height = 400,
-        width = 550,
-        translation = "translate(" + margin.left + "," + margin.top + ")";
+          zoom = 625,
+          height = 400,
+          width = 550,
+          translation = "translate(" + margin.left + "," + margin.top + ")",
+          cenerMarker = [-92., 37.]; // projection needs [lon, lat];
+
+    const lat = props.originLat,
+          lon = props.originLon;
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);
-        const lat = 0.;
-        const lon = 0.;
 
         const adjustedWidth = width + margin.left + margin.right;
         const adjustedHeight = height + margin.top + margin.bottom;
         resizeSvg(svg, adjustedHeight, adjustedWidth);
 
-        const cenerMarker = [-92., 37.]; // projection needs [lon, lat]
         const projection = createGeoProjection(cenerMarker, height, width, zoom);
         addMapToProjection(svg, projection, translation);
 
