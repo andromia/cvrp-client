@@ -15,7 +15,7 @@ module.exports = {
             USER_CRUD_URL: "http://localhost:8081/"
         },
     },
-    webpackDevMiddleware: config => {
+    webpackDevMiddleware: config => { // TODO: dev-specific
         config.watchOptions = {
           poll: 800,
           aggregateTimeout: 300,

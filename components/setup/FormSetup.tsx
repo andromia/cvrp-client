@@ -48,17 +48,21 @@ const getVrpSolution = (data: any) => {
 const FormSetup = () => {
     // TODO: const?
     const [fileName, setFileName] = useState("demand file");
+    const [originLat, setOriginLat] = useState(41.4191);
+    const [originLon, setOriginLon] = useState(-87.7748);
     const latRef = useRef<HTMLInputElement>(null);
     const lonRef = useRef<HTMLInputElement>(null);
 
     const onGeoInputUpdate = event => {
         // NOTE: limiting to contiguous usa for MVP
-        const lat = latRef.current?.value || null;
-        const lon = lonRef.current?.value || null;
+        // TODO: null island default?
+        const lat = Number(latRef.current?.value) || 0.;
+        const lon = Number(lonRef.current?.value) || 0.;
 
         if (isContiguousUSA(lat, lon)) {
             console.log("lat: " + lat + " lon: " + lon);
-            // TODO: update state to trigger map update (?)
+            setOriginLat(lat);
+            setOriginLon(lon);
         }
     };
     
@@ -140,7 +144,7 @@ const FormSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <OriginMap />
+                            <OriginMap originLat={originLat} originLon={originLon} />
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
