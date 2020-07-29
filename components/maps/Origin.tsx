@@ -1,6 +1,6 @@
 import React, { Component, useRef } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
-import * as GeoTypes from "../enums/geo";
+import * as GeoTypes from "../types/geo";
 
 
 const getMapCenter = (markers: any) => {

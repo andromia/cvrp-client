@@ -13,6 +13,13 @@ module.exports = {
         prod: {
             USER_AUTH_URL: "http://localhost:8080/",
             USER_CRUD_URL: "http://localhost:8081/"
+        },
+    },
+    webpackDevMiddleware: config => {
+        config.watchOptions = {
+          poll: 800,
+          aggregateTimeout: 300,
         }
-    }
+        return config
+      },
 };

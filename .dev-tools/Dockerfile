@@ -8,11 +8,11 @@ WORKDIR /usr/src/app
 # Set node in path
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
-# Copy over dependencies & install
+# Copy over dependencies
 COPY package.json /usr/src/app/package.json
 RUN yarn install
 
-# Copy all project files over & build
+# Copy all project files over
 COPY . /usr/src/app
 
 EXPOSE 3000

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import Papa from "papaparse";
-import * as GeoTypes from "../enums/geo";
+import * as GeoTypes from "../types/geo";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
