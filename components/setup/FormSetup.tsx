@@ -19,6 +19,7 @@ const checkCsvData = (csvData: Object) => {
     assert(csvData); // TODO
 }
 
+// TODO: abstract to module
 const isContiguousUSA = (lat: Number, lon: Number) => {
     if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) { 
         return true; 
@@ -48,8 +49,8 @@ const getVrpSolution = (data: any) => {
 const FormSetup = () => {
     // TODO: const?
     const [fileName, setFileName] = useState("demand file");
-    const [originLat, setOriginLat] = useState(41.4191);
-    const [originLon, setOriginLon] = useState(-87.7748);
+    const [originLat, setOriginLat] = useState(0.);
+    const [originLon, setOriginLon] = useState(0.);
     const latRef = useRef<HTMLInputElement>(null);
     const lonRef = useRef<HTMLInputElement>(null);
 

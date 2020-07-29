@@ -69,6 +69,14 @@ const addMapToProjection = (svg: any, projection: any, translation: any) => {
     });
 }
 
+const markerIsContinuousUsa = (lat: Number, lon: Number) => {
+    if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 const addCircleToMap = (svg: any, lat: Number, lon: Number, projection: any, translation: any) => {
     /*var tooltip = d3.select("body")
         .append("div")
@@ -76,7 +84,6 @@ const addCircleToMap = (svg: any, lat: Number, lon: Number, projection: any, tra
         .style("z-index", "10")
         .style("visibility", "hidden")
         .text([markers[0].latitude, markers[0].longitude]);*/
-
     // Add circles:
     svg.selectAll("myCircles")
         .data([{'latitude': lat, 'longitude': lon}])
@@ -99,8 +106,8 @@ const OriginMap = (props) => {
     const svgRef = useRef(null);
 
     // TODO: relative margins and translations
-    const margin = {top: 20, right: 20, bottom: 40, left: 200},
-        zoom = 500,
+    const margin = {top: 0, right: 20, bottom: 0, left: 175},
+        zoom = 625,
         translation = "translate(" + margin.left + "," + margin.top + ")";
 
     // TODO: for relative sizing;
@@ -109,8 +116,8 @@ const OriginMap = (props) => {
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);
-        const lat = props.originLat;
-        const lon = props.originLon;
+        const lat = 0.;
+        const lon = 0.;
 
         width = parseInt(svg.attr("width"));
         height = parseInt(svg.attr("width"));
@@ -119,13 +126,16 @@ const OriginMap = (props) => {
         const adjustedHeight = height + margin.top + margin.bottom;
         resizeSvg(svg, adjustedHeight, adjustedWidth);
 
-        const markerArray = [lon, lat];
-        const projection = createGeoProjection(markerArray, height, width, zoom);
+        const cenerMarker = [-92., 37.]; // projection needs [lon, lat]
+        const projection = createGeoProjection(cenerMarker, height, width, zoom);
         addMapToProjection(svg, projection, translation);
-        addCircleToMap(svg, lat, lon, projection, translation);
+
+        if (markerIsContinuousUsa(lat, lon)) {
+            addCircleToMap(svg, lat, lon, projection, translation);
+        }
     });
 
-    return (<svg ref={svgRef} height="300px" width="500px" display="block"></svg>);
+    return (<svg ref={svgRef} height="100px" width="550px" display="block"></svg>);
 }
   
 export default OriginMap;
