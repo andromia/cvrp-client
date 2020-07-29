@@ -106,21 +106,16 @@ const OriginMap = (props) => {
     const svgRef = useRef(null);
 
     // TODO: relative margins and translations
-    const margin = {top: 0, right: 20, bottom: 0, left: 175},
+    const margin = {top: 20, right: 20, bottom: 0, left: 175},
         zoom = 625,
+        height = 400,
+        width = 550,
         translation = "translate(" + margin.left + "," + margin.top + ")";
-
-    // TODO: for relative sizing;
-    let width = 0,
-        height = 0;
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);
         const lat = 0.;
         const lon = 0.;
-
-        width = parseInt(svg.attr("width"));
-        height = parseInt(svg.attr("width"));
 
         const adjustedWidth = width + margin.left + margin.right;
         const adjustedHeight = height + margin.top + margin.bottom;
@@ -133,7 +128,7 @@ const OriginMap = (props) => {
         if (markerIsContinuousUsa(lat, lon)) {
             addCircleToMap(svg, lat, lon, projection, translation);
         }
-    });
+    }, []);
 
     return (<svg ref={svgRef} height="100px" width="550px" display="block"></svg>);
 }
