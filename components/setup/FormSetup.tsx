@@ -116,10 +116,10 @@ const FormSetup = () => {
                                 <Col>
                                     <Row>
                                         <Col>
-                                            <FormControl id="origin-lat" ref={latRef} className="d-inline-flex" placeholder="lat." aria-label="Lat." onChange={onGeoInputUpdate}/>
+                                            <FormControl id="origin-lat" ref={latRef} className="d-inline-flex" placeholder="lat." aria-label="Lat." onChange={onGeoInputUpdate} autoComplete="off" />
                                         </Col>
                                         <Col>
-                                            <FormControl id="origin-lon" ref={lonRef} className="d-inline-flex" placeholder="lon." aria-label="Lon." onChange={onGeoInputUpdate}/>
+                                            <FormControl id="origin-lon" ref={lonRef} className="d-inline-flex" placeholder="lon." aria-label="Lon." onChange={onGeoInputUpdate} autoComplete="off"/>
                                         </Col>
                                     </Row>
                                 </Col>

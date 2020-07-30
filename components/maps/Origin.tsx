@@ -85,6 +85,8 @@ const addCircleToMap = (svg: any, lat: Number, lon: Number, projection: any, tra
         .style("visibility", "hidden")
         .text([markers[0].latitude, markers[0].longitude]);*/
     // Add circles:
+    svg.selectAll("circle").remove();
+
     svg.selectAll("myCircles")
         .data([{'latitude': lat, 'longitude': lon}])
         .enter()
@@ -111,11 +113,17 @@ const OriginMap = (props) => {
           height = 400,
           width = 550,
           translation = "translate(" + margin.left + "," + margin.top + ")",
-          cenerMarker = [-92., 37.]; // projection needs [lon, lat];
+          centerMarker = [-92., 37.]; // projection needs [lon, lat];
 
-    const lat = props.originLat,
-          lon = props.originLon;
+    useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        const projection = createGeoProjection(centerMarker, height, width, zoom);
 
+        if (markerIsContinuousUsa(props.originLat, props.originLon)) {
+            addCircleToMap(svg, props.originLat, props.originLon, projection, translation);
+        }
+    });
+   
     useEffect(() => {
         const svg = d3.select(svgRef.current);
 
@@ -123,12 +131,8 @@ const OriginMap = (props) => {
         const adjustedHeight = height + margin.top + margin.bottom;
         resizeSvg(svg, adjustedHeight, adjustedWidth);
 
-        const projection = createGeoProjection(cenerMarker, height, width, zoom);
+        const projection = createGeoProjection(centerMarker, height, width, zoom);
         addMapToProjection(svg, projection, translation);
-
-        if (markerIsContinuousUsa(lat, lon)) {
-            addCircleToMap(svg, lat, lon, projection, translation);
-        }
     }, []);
 
     return (<svg ref={svgRef} height="100px" width="550px" display="block"></svg>);
