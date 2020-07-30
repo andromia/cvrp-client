@@ -89,7 +89,7 @@ const FormSetup = () => {
         checkNum(dataObj.origin_latitude);
         checkNum(dataObj.vehicle_max_capacity_quantity);
         
-        Papa.parse(event.target[10].files[0], {
+        Papa.parse(event.target[4].files[0], {
             header: true,
             complete: function(results) {
                 checkCsvData(results);

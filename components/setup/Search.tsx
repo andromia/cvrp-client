@@ -10,15 +10,15 @@ const Search = () => {
     return (
         <Row className="d-flex justify-content-center">
             <Col lg="5">
-                <FormControl className="d-inline-flex" placeholder="Search..." aria-label="Search..." />
+                <FormControl className="d-inline-flex" placeholder="Search..." aria-label="Search..." disabled/>
             </Col>
             <Col lg="auto">
-                <Button className="d-inline-flex" variant="primary">
+                <Button className="d-inline-flex" variant="primary" disabled>
                     Button 1
                 </Button>
             </Col>
             <Col lg="auto">
-                <Button className="d-inline-flex" variant="primary">
+                <Button className="d-inline-flex" variant="primary" disabled>
                     Button 2
                 </Button>
             </Col>
