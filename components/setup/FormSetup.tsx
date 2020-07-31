@@ -119,7 +119,7 @@ const FormSetup = () => {
         }
 
         if (originLon > 180. || originLon < -180.) {
-            alert("origin latitude is invalid!");
+            alert("origin longitude is invalid!");
 
             return;
         }
