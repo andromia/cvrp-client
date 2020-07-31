@@ -8,32 +8,37 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import OriginMap from "../maps/Origin";
+import VrpBubbleMap from "../maps/BubbleMap";
 import Button from "react-bootstrap/Button";
 
-
-const assert = require('assert');
 const axios = require('axios');
 
-const checkCsvData = (csvData: Object) => {
-    assert(csvData); // TODO
+const checkFileData = (data: Object) => {
+    // TODO: expand on this
+    if (!data[0].hasOwnProperty("latitude") || !data[0].hasOwnProperty("longitude")) {
+        alert("latitude and longitude fields are required in the damand file!");
+    }
 }
 
 // TODO: abstract to module
 const isContiguousUSA = (lat: Number, lon: Number) => {
     if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) { 
         return true; 
-    } else { 
+    } else {
         return false; 
     }
 }
 
-const checkNum = (val: Number) => {
-    assert(Number(val));
+const checkNum = (val: any) => {
+    if (!isFinite(val)) {
+        alert("value is not a number!");
+    }
 }
 
 const checkUnit = (unit: String, data: any) => {
-    assert(data[0].hasOwnProperty(unit));
+    if (!data[0].hasOwnProperty(unit)) {
+        alert("unit entered cannot be found in the demand file!");
+    }
 }
 
 const getVrpSolution = (data: any) => {
@@ -48,58 +53,98 @@ const getVrpSolution = (data: any) => {
 
 const FormSetup = () => {
     // TODO: const?
-    const [fileName, setFileName] = useState("demand file");
-    const [originLat, setOriginLat] = useState(0.);
-    const [originLon, setOriginLon] = useState(0.);
-    const latRef = useRef<HTMLInputElement>(null);
-    const lonRef = useRef<HTMLInputElement>(null);
+    const [originLat, setOriginLat] = useState(-999.),
+          [originLon, setOriginLon] = useState(-999.),
+          [vehicleCap, setVehicleCap] = useState(-999),
+          [vehicleUnit, setVehicleUnit] = useState(""),
+          [fileName, setFileName] = useState("demand file"),
+          [demandMarkers, setDemandMarkers] = useState(null);
+
+    const latRef = useRef<HTMLInputElement>(null),
+          lonRef = useRef<HTMLInputElement>(null);
 
     const onGeoInputUpdate = event => {
         // NOTE: limiting to contiguous usa for MVP
-        // TODO: null island default?
-        const lat = Number(latRef.current?.value) || 0.;
-        const lon = Number(lonRef.current?.value) || 0.;
+        // TODO: null island default? make this one html element.
+        if (event.target.value == '-') {
+            return;
+        }
 
-        if (isContiguousUSA(lat, lon)) {
-            console.log("lat: " + lat + " lon: " + lon);
-            setOriginLat(lat);
-            setOriginLon(lon);
+        const latInput = Number(latRef.current?.value);
+        const lonInput = Number(lonRef.current?.value);
+
+        checkNum(latInput);
+        checkNum(lonInput);
+
+        if (isContiguousUSA(latInput, lonInput)) {
+            setOriginLat(latInput);
+            setOriginLon(lonInput);
         }
     };
     
-    const onFileSubmit = event => {
+    const onFileUpdate = event => {
         setFileName(event.target.value.split("\\").splice(-1)[0]);
+
+        Papa.parse(event.target.files[0], {
+            header: true,
+            complete: function(results) {
+                checkFileData(results.data);
+
+                setDemandMarkers(results.data);
+            }
+        });
     };
+
+    const onVehicleCapUpdate = event => {
+        const cap = Number(event.target.value);
+        checkNum(cap);
+
+        setVehicleCap(cap);
+    }
+
+    const onVehicleUnitUpdate = event => {
+        const unit = String(event.target.value);
+
+        setVehicleUnit(unit);
+    }
 
     // handle api integration
     const onCreateSubmit = event => {
         event.preventDefault();
 
-        // TODO: figure out how to properly ref
-        let dataObj = {
-            origin_latitude: event.target[0].value,
-            origin_longitude: event.target[1].value,
-            vehicle_max_capacity_quantity: event.target[2].value,
-            vehicle_definitions: [],
-            unit: event.target[3].value,
-            demand: [],
+        if (originLat > 90. || originLat < -90.) {
+            alert("origin latitude is invalid!");
+            
+            return;
         }
 
-        checkNum(dataObj.origin_latitude);
-        checkNum(dataObj.origin_latitude);
-        checkNum(dataObj.vehicle_max_capacity_quantity);
+        if (originLon > 180. || originLon < -180.) {
+            alert("origin latitude is invalid!");
+
+            return;
+        }
+
+        if (!Number.isInteger(vehicleCap)) {
+            alert("vehicle capacity is invalid!");
+
+            return;
+        }
         
-        Papa.parse(event.target[4].files[0], {
-            header: true,
-            complete: function(results) {
-                checkCsvData(results);
-                checkUnit(dataObj.unit, results.data);
+        if (demandMarkers) {
+            checkUnit(vehicleUnit, demandMarkers);
+        } else {
+            alert("demand file is invalid!");
 
-                dataObj.demand = results.data;
-                console.log("data object", dataObj);
+            return;
+        }
 
-                getVrpSolution(dataObj);
-            }
+        getVrpSolution({
+            origin_latitude: originLat,
+            origin_longitude: originLon,
+            vehicle_max_capacity_quantity: vehicleCap,
+            vehicle_definitions: [], // TODO: remove this for MVP
+            unit: vehicleUnit,
+            demand: demandMarkers,
         });
     };
 
@@ -133,10 +178,10 @@ const FormSetup = () => {
                                 <Col>
                                     <Row>
                                         <Col>
-                                            <FormControl id="max-vehicle-cap" className="d-inline-flex" placeholder="capacity" aria-label="capacity" />
+                                            <FormControl id="max-vehicle-cap" className="d-inline-flex" placeholder="capacity" aria-label="capacity" onChange={onVehicleCapUpdate} />
                                         </Col>
                                         <Col>
-                                            <FormControl id="unit" className="d-inline-flex" placeholder="unit" aria-label="unit" />
+                                            <FormControl id="unit" className="d-inline-flex" placeholder="unit" aria-label="unit" onChange={onVehicleUnitUpdate} />
                                         </Col>
                                     </Row>
                                 </Col>
@@ -145,12 +190,12 @@ const FormSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <OriginMap originLat={originLat} originLon={originLon} />
+                            <VrpBubbleMap originLat={originLat} originLon={originLon} demandMarkers={demandMarkers}/>
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
                         <Col lg="8">
-                            <Form.File id="custom-file" label={fileName} custom onChange={onFileSubmit} />
+                            <Form.File id="custom-file" label={fileName} custom onChange={onFileUpdate} />
                         </Col>
                         <Col lg="auto">
                             <Button type="submit">Create</Button>

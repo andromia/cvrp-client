@@ -104,7 +104,7 @@ const addCircleToMap = (svg: any, lat: Number, lon: Number, projection: any, tra
         //.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 }
 
-const OriginMap = (props) => {
+const VrpBubbleMap = (props) => {
     const svgRef = useRef(null);
 
     // TODO: relative margins and translations
@@ -138,4 +138,4 @@ const OriginMap = (props) => {
     return (<svg ref={svgRef} height="100px" width="550px" display="block"></svg>);
 }
   
-export default OriginMap;
+export default VrpBubbleMap;
