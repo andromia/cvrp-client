@@ -8,24 +8,17 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import VrpBubbleMap from "../maps/BubbleMap";
+import VrpBubbleMap, { markerIsContiguousUsa, markersAreContiguousUsa } from "../maps/BubbleMap";
 import Button from "react-bootstrap/Button";
 
+
 const axios = require('axios');
+const defaultMarkers = [{"latitude": -999., "longitude": -999.}];
 
 const checkFileData = (data: Object) => {
     // TODO: expand on this
     if (!data[0].hasOwnProperty("latitude") || !data[0].hasOwnProperty("longitude")) {
         alert("latitude and longitude fields are required in the damand file!");
-    }
-}
-
-// TODO: abstract to module
-const isContiguousUSA = (lat: Number, lon: Number) => {
-    if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) { 
-        return true; 
-    } else {
-        return false; 
     }
 }
 
@@ -58,7 +51,7 @@ const FormSetup = () => {
           [vehicleCap, setVehicleCap] = useState(-999),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
-          [demandMarkers, setDemandMarkers] = useState(null);
+          [demandMarkers, setDemandMarkers] = useState(defaultMarkers);
 
     const latRef = useRef<HTMLInputElement>(null),
           lonRef = useRef<HTMLInputElement>(null);
@@ -76,10 +69,8 @@ const FormSetup = () => {
         checkNum(latInput);
         checkNum(lonInput);
 
-        if (isContiguousUSA(latInput, lonInput)) {
-            setOriginLat(latInput);
-            setOriginLon(lonInput);
-        }
+        setOriginLat(latInput);
+        setOriginLon(lonInput);
     };
     
     const onFileUpdate = event => {
@@ -112,14 +103,8 @@ const FormSetup = () => {
     const onCreateSubmit = event => {
         event.preventDefault();
 
-        if (originLat > 90. || originLat < -90.) {
-            alert("origin latitude is invalid!");
-            
-            return;
-        }
-
-        if (originLon > 180. || originLon < -180.) {
-            alert("origin longitude is invalid!");
+        if (!markerIsContiguousUsa(originLat, originLon)) {
+            alert("lattitude and longitude must be within the congiuous USA!");
 
             return;
         }
@@ -130,12 +115,17 @@ const FormSetup = () => {
             return;
         }
         
-        if (demandMarkers) {
+        if (demandMarkers != defaultMarkers) {
             checkUnit(vehicleUnit, demandMarkers);
+
         } else {
             alert("demand file is invalid!");
 
             return;
+        }
+
+        if (!markersAreContiguousUsa(demandMarkers)) {
+            alert("demand latitudes and longitudes must be within the contiguous USA!");
         }
 
         getVrpSolution({

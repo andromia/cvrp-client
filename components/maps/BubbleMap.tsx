@@ -69,13 +69,26 @@ const addMapToProjection = (svg: any, projection: any, translation: any) => {
     });
 }
 
-const markerIsContinuousUsa = (lat: Number, lon: Number) => {
+// TODO refactor exported functions
+export const markerIsContiguousUsa = (lat: Number, lon: Number) => {
     if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) {
         return true;
     } else {
         return false;
     }
 }
+
+export const markersAreContiguousUsa = (markers: Array<Object>) => {
+    let areContiguous = true;
+    for (let i = 0; i < markers.length; i++) {
+        if (!markerIsContiguousUsa(markers[i].latitude, markers[i].longitude)) {
+            areContiguous = false;
+        }
+    }
+
+    return areContiguous;
+}
+
 
 const drawCirclesOnMap = (svg: any, markers: Array<Object>, projection: any, translation: any, name: string, size: number) => {
     svg.selectAll("myCircles")
@@ -130,14 +143,7 @@ const VrpBubbleMap = (props) => {
             return;
         }
 
-        let isContiguousUsa = true;
-        for (let i = 0; i < markers.length; i++) {
-            if (!markerIsContinuousUsa(markers[i].latitude, markers[i].longitude)) {
-                isContiguousUsa = false;
-            }
-        }
-
-        if (isContiguousUsa) {
+        if (markersAreContiguousUsa(markers)) {
             addDemandToMap(svg, markers, projection, translation);
         }
     });
@@ -148,7 +154,7 @@ const VrpBubbleMap = (props) => {
 
         const lat = props.originLat;
         const lon = props.originLon;
-        if (markerIsContinuousUsa(lat, lon)) {
+        if (markerIsContiguousUsa(lat, lon)) {
             addOriginToMap(svg, lat, lon, projection, translation);
         }
     });
