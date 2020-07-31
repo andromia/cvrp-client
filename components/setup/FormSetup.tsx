@@ -48,7 +48,7 @@ const FormSetup = () => {
     // TODO: const?
     const [originLat, setOriginLat] = useState(-999.),
           [originLon, setOriginLon] = useState(-999.),
-          [vehicleCap, setVehicleCap] = useState(-999),
+          [vehicleCap, setVehicleCap] = useState(-999.9),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
           [demandMarkers, setDemandMarkers] = useState(defaultMarkers);
