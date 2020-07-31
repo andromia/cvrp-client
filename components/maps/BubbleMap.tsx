@@ -77,31 +77,37 @@ const markerIsContinuousUsa = (lat: Number, lon: Number) => {
     }
 }
 
-const addCircleToMap = (svg: any, lat: Number, lon: Number, projection: any, translation: any) => {
-    /*var tooltip = d3.select("body")
-        .append("div")
-        .style("position", "absolute")
-        .style("z-index", "10")
-        .style("visibility", "hidden")
-        .text([markers[0].latitude, markers[0].longitude]);*/
-    // Add circles:
-    svg.selectAll("circle").remove();
-
+const drawCirclesOnMap = (svg: any, markers: Array<Object>, projection: any, translation: any, name: string, size: number) => {
     svg.selectAll("myCircles")
-        .data([{'latitude': lat, 'longitude': lon}])
+        .data(markers)
         .enter()
         .append("svg:circle")
+        .attr("class", name)
         .attr("cx", function(d){ return projection([d.longitude, d.latitude])[0] })
         .attr("cy", function(d){ return projection([d.longitude, d.latitude])[1] })
-        .attr("r", 8)
+        .attr("r", size)
         .style("fill", "69b3a2")
         .attr("stroke", "#69b3a2")
-        .attr("stroke-width", 3)
+        .attr("stroke-width", (size/4))
         .attr("fill-opacity", .4)
-        .attr("transform", translation)
-        //.on("mouseover", function(){return tooltip.style("visibility", "visible");})
-        //.on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-        //.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+        .attr("transform", translation);
+}
+
+const addOriginToMap = (svg: any, lat: Number, lon: Number, projection: any, translation: any) => {
+    const name = "originCircle";
+    const size = 8;
+    svg.selectAll("." + name).remove();
+
+    const markers = [{"latitude": lat, "longitude": lon}];
+    drawCirclesOnMap(svg, markers, projection, translation, name, size);
+}
+
+const addDemandToMap = (svg: any, markers: Array<Object>, projection: any, translation: any) => {
+    const name = "demandCircles";
+    const size = 3;
+    svg.selectAll("." + name).remove();
+    
+    drawCirclesOnMap(svg, markers, projection, translation, name, size);
 }
 
 const VrpBubbleMap = (props) => {
@@ -119,8 +125,31 @@ const VrpBubbleMap = (props) => {
         const svg = d3.select(svgRef.current);
         const projection = createGeoProjection(centerMarker, height, width, zoom);
 
-        if (markerIsContinuousUsa(props.originLat, props.originLon)) {
-            addCircleToMap(svg, props.originLat, props.originLon, projection, translation);
+        const markers = props.demandMarkers;
+        if (!markers) {
+            return;
+        }
+
+        let isContiguousUsa = true;
+        for (let i = 0; i < markers.length; i++) {
+            if (!markerIsContinuousUsa(markers[i].latitude, markers[i].longitude)) {
+                isContiguousUsa = false;
+            }
+        }
+
+        if (isContiguousUsa) {
+            addDemandToMap(svg, markers, projection, translation);
+        }
+    });
+
+    useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        const projection = createGeoProjection(centerMarker, height, width, zoom);
+
+        const lat = props.originLat;
+        const lon = props.originLon;
+        if (markerIsContinuousUsa(lat, lon)) {
+            addOriginToMap(svg, lat, lon, projection, translation);
         }
     });
    
