@@ -180,7 +180,7 @@ const FormSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <VrpBubbleMap originLat={originLat} originLon={originLon} demandMarkers={demandMarkers}/>
+                            <VrpBubbleMap originLat={originLat} originLon={originLon} demandMarkers={demandMarkers} width={"100%"} height={300} />
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">

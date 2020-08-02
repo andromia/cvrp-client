@@ -3,37 +3,8 @@ import * as d3 from "d3"; // TODO: optimize d3
 import * as GeoTypes from "../types/geo";
 
 
-const getMapCenter = (markers: any) => {
-    /**
-     * Calculates average of coordinates and returns
-     * as list [longitude, latitude]
-     * 
-     * NOTE: unused
-     */
-    let latSum = 0, lonSum = 0;
-
-    for (var i = 0; i < markers.length; i++) {
-        latSum = latSum + markers[i].latitude;
-        lonSum = lonSum + markers[i].longitude;
-    }
-    
-    let center = [lonSum / markers.length, latSum / markers.length];
-
-    return center;
-}
-
-const isDefaultMarkers = (lat: Number, lon: Number) => {
-    /** Is Null Island, set to something nice TODO: null island default */
-    if (lat == 0. || lat == null || lon == 0. || lon == null) {
-        return true;
-    } else {
-        return false;
-    }
-} 
-
-// TODO: d3 types
-const resizeSvg = (svg: any, height: Number, width: Number) => {
-    svg.attr("width", width).attr("height", height);
+const getSvg = (ref: any) => {
+    return d3.select(ref.current);
 }
 
 const createGeoProjection = (centerMarkerArray: Array<Number>, height: Number, width: Number, zoom: Number) => {
@@ -52,7 +23,8 @@ const addMapToProjection = (svg: any, projection: any, translation: any) => {
         data.features = data.features.filter( function(d){return d.properties.name=="USA"} );
 
         // Draw the map
-        svg.append("g").attr("transform", translation)
+        svg.append("g")
+            .attr("transform", translation)
             .selectAll("path")
             .data(data.features)
             .enter()
@@ -78,7 +50,7 @@ export const markerIsContiguousUsa = (lat: Number, lon: Number) => {
     }
 }
 
-export const markersAreContiguousUsa = (markers: Array<Object>) => {
+export const markersAreContiguousUsa = (markers: any) => {
     let areContiguous = true;
     for (let i = 0; i < markers.length; i++) {
         if (!markerIsContiguousUsa(markers[i].latitude, markers[i].longitude)) {
@@ -124,21 +96,19 @@ const addDemandToMap = (svg: any, markers: Array<Object>, projection: any, trans
 }
 
 const VrpBubbleMap = (props) => {
-    const svgRef = useRef(null);
-
-    // TODO: relative margins and translations
-    const margin = {top: 20, right: 20, bottom: 0, left: 175},
+    const svgRef = useRef(null),
+          margin = {top: 50, right: 20, bottom: 20, left: 20},
           zoom = 625,
-          height = 400,
-          width = 550,
           translation = "translate(" + margin.left + "," + margin.top + ")",
           centerMarker = [-92., 37.]; // projection needs [lon, lat];
 
     useEffect(() => {
-        const svg = d3.select(svgRef.current);
-        const projection = createGeoProjection(centerMarker, height, width, zoom);
+        const svg = getSvg(svgRef),
+              width = parseInt(svg.style("width")),
+              height = parseInt(svg.style("height")),
+              projection = createGeoProjection(centerMarker, height, width, zoom),
+              markers = props.demandMarkers;
 
-        const markers = props.demandMarkers;
         if (!markers) {
             return;
         }
@@ -149,28 +119,34 @@ const VrpBubbleMap = (props) => {
     });
 
     useEffect(() => {
-        const svg = d3.select(svgRef.current);
-        const projection = createGeoProjection(centerMarker, height, width, zoom);
+        const svg = getSvg(svgRef),
+              width = parseInt(svg.style("width")),
+              height = parseInt(svg.style("height")),
+              projection = createGeoProjection(centerMarker, height, width, zoom),
+              lat = props.originLat,
+              lon = props.originLon;
 
-        const lat = props.originLat;
-        const lon = props.originLon;
         if (markerIsContiguousUsa(lat, lon)) {
             addOriginToMap(svg, lat, lon, projection, translation);
         }
     });
    
     useEffect(() => {
-        const svg = d3.select(svgRef.current);
-
-        const adjustedWidth = width + margin.left + margin.right;
-        const adjustedHeight = height + margin.top + margin.bottom;
-        resizeSvg(svg, adjustedHeight, adjustedWidth);
+        const svg = getSvg(svgRef),
+              width = parseInt(svg.style("width")),
+              height = parseInt(svg.style("height")),
+              adjustedWidth = width + margin.left + margin.right,
+              adjustedHeight = height + margin.top + margin.bottom;
+        
+        svg.attr("viewBox", "0 0 " + adjustedWidth + " " + adjustedHeight)
+            .attr("preserveAspectRatio", "xMinYMin");
 
         const projection = createGeoProjection(centerMarker, height, width, zoom);
+
         addMapToProjection(svg, projection, translation);
     }, []);
 
-    return (<svg ref={svgRef} height="100px" width="550px" display="block"></svg>);
+    return (<svg ref={svgRef} height={props.height} width={props.width}></svg>);
 }
   
 export default VrpBubbleMap;
