@@ -1,3 +1,6 @@
+/**
+ * NOTE: this map is limited to contiguous USA for initial versions.
+ */
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
 import * as utils from "./utils";
@@ -47,16 +50,16 @@ const getProjection = (svg: any) => {
       return projection;
 }
 
-const addMapToProjection = (svg: any, translation: string, country: string) => {
+const addMapToProjection = (svg: any, translation: string) => {
     /**
-     * Using d3 selected svg element and computed translation, project country visual to svg.
+     * Using d3 selected svg element and computed translation, TODO: project country visual to svg.
      */
     d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
 
         const projection = getProjection(svg);
 
         // Filter data
-        data.features = data.features.filter( function(d){return d.properties.name==country} );
+        data.features = data.features.filter( function(d){return d.properties.name=="USA"} );
 
         // Draw the map
         svg.append("g")
@@ -163,8 +166,9 @@ const VrpBubbleMap = (props) => {
          * init
          */
         const svg = getSvg(svgRef);
+
         updateSvgSize(svg, margin);
-        addMapToProjection(svg, translation, "USA");
+        addMapToProjection(svg, translation);
     }, []);
 
     return (<svg ref={svgRef} height={props.height} width={props.width}></svg>);
