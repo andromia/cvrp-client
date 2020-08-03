@@ -29,7 +29,7 @@ const updateSvgSize = (svg: any, margin: any) => {
           height = parseInt(svg.style("height"));
         
     svg.attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMinYMin")
+        .attr("preserveAspectRatio", "xMeet")
         .classed("svg-content", true);
 }
 
@@ -85,8 +85,7 @@ const drawCirclesOnMap = (svg: any, markers: Array<Object>, translation: string,
 
     svg.selectAll("myCircles")
         .data(markers)
-        .enter()
-        .append("svg:circle")
+        .join("svg:circle")
         .attr("class", name)
         .attr("cx", function(d){ return projection([d.longitude, d.latitude])[0] })
         .attr("cy", function(d){ return projection([d.longitude, d.latitude])[1] })
