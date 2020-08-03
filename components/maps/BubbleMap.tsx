@@ -123,14 +123,29 @@ const addDemandToMap = (svg: any, markers: Array<Object>, translation: any) => {
     drawCirclesOnMap(svg, markers, translation, name, size);
 }
 
+const animateSvg = (svg: any) => {
+
+}
+
 const VrpBubbleMap = (props) => {
     /**
      * Map component function exported to parent.
      */
     const svgRef = useRef(null),
-          margin = {top: 50, right: 50, bottom: 0, left: 50},
+          margin = {top: 10, right: 50, bottom: 0, left: 50},
           translation = getTranslation(margin);
 
+
+    useEffect(() => {
+        const isAnimating = props.isAnimating;
+
+        if (isAnimating == true) { 
+            const svg = getSvg(svgRef);
+            
+            animateSvg(svg);
+        }
+    })
+    
     useEffect(() => {
         /**
          * Tie to  demand file state.

@@ -52,7 +52,8 @@ const FormSetup = () => {
           [vehicleCap, setVehicleCap] = useState(-999.9),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
-          [demandMarkers, setDemandMarkers] = useState(defaultMarkers);
+          [demandMarkers, setDemandMarkers] = useState(defaultMarkers),
+          [isAnimating, setAnimation] = useState(false);
 
     const latRef = useRef<HTMLInputElement>(null),
           lonRef = useRef<HTMLInputElement>(null);
@@ -129,14 +130,17 @@ const FormSetup = () => {
             alert("demand latitudes and longitudes must be within the contiguous USA!");
         }
 
-        getVrpSolution({
+        setAnimation(true);
+
+        /*getVrpSolution({
             origin_latitude: originLat,
             origin_longitude: originLon,
             vehicle_max_capacity_quantity: vehicleCap,
             vehicle_definitions: [], // TODO: remove this for MVP
             unit: vehicleUnit,
             demand: demandMarkers,
-        });
+        });*/
+
     };
 
     return (
@@ -169,10 +173,10 @@ const FormSetup = () => {
                                 <Col>
                                     <Row>
                                         <Col>
-                                            <FormControl id="max-vehicle-cap" className="d-inline-flex" placeholder="capacity" aria-label="capacity" onChange={onVehicleCapUpdate} />
+                                            <FormControl id="max-vehicle-cap" className="d-inline-flex" placeholder="capacity" aria-label="capacity" onChange={onVehicleCapUpdate} autoComplete="off" />
                                         </Col>
                                         <Col>
-                                            <FormControl id="unit" className="d-inline-flex" placeholder="unit" aria-label="unit" onChange={onVehicleUnitUpdate} />
+                                            <FormControl id="unit" className="d-inline-flex" placeholder="unit" aria-label="unit" onChange={onVehicleUnitUpdate} autoComplete="off"/>
                                         </Col>
                                     </Row>
                                 </Col>
@@ -181,7 +185,7 @@ const FormSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <VrpBubbleMap originLat={originLat} originLon={originLon} demandMarkers={demandMarkers} width={"100%"} height={375} />
+                            <VrpBubbleMap originLat={originLat} originLon={originLon} demandMarkers={demandMarkers} isAnimating={isAnimating} width={"100%"} height={375} />
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
