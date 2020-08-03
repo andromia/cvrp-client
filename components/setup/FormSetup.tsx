@@ -8,7 +8,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import VrpBubbleMap, { markerIsContiguousUsa, markersAreContiguousUsa } from "../maps/BubbleMap";
+import VrpBubbleMap from "../maps/BubbleMap";
+import * as mapUtils from "../maps/utils";
 import Button from "react-bootstrap/Button";
 
 
@@ -103,7 +104,7 @@ const FormSetup = () => {
     const onCreateSubmit = event => {
         event.preventDefault();
 
-        if (!markerIsContiguousUsa(originLat, originLon)) {
+        if (!mapUtils.markerIsContiguousUsa(originLat, originLon)) {
             alert("lattitude and longitude must be within the congiuous USA!");
 
             return;
@@ -124,7 +125,7 @@ const FormSetup = () => {
             return;
         }
 
-        if (!markersAreContiguousUsa(demandMarkers)) {
+        if (!mapUtils.markersAreContiguousUsa(demandMarkers)) {
             alert("demand latitudes and longitudes must be within the contiguous USA!");
         }
 

@@ -1,26 +1,62 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
+import * as utils from "./utils";
 import * as GeoTypes from "../types/geo";
 
 
 const getSvg = (ref: any) => {
+    /**
+     * Return d3 control over ref virtualization.
+     */
     return d3.select(ref.current);
 }
 
-const createGeoProjection = (centerMarkerArray: Array<Number>, height: Number, width: Number, zoom: Number) => {
-    const projection = d3.geoMercator()
-        .center(centerMarkerArray)
-        .scale(zoom)
-        .translate([ Number(width) / 2, Number(height) / 2 ]);
-
-    return projection;
+const getTranslation = (margin: any) => { 
+    /**
+     * Return translation string corresponding to margins.
+     */
+    return "translate(" + margin.left + "," + margin.top + ")";
 }
 
-const addMapToProjection = (svg: any, projection: any, translation: any) => {
+const updateSvgSize = (svg: any, margin: any) => {
+    /**
+     * Update d3 selected svg with viewBoc using margin-adjusted height and width.
+     */
+    const width = parseInt(svg.style("width")),
+          height = parseInt(svg.style("height")),
+          adjustedWidth = width + margin.left + margin.right,
+          adjustedHeight = height + margin.top + margin.bottom;
+        
+    svg.attr("viewBox", "0 0 " + adjustedWidth + " " + adjustedHeight)
+        .attr("preserveAspectRatio", "xMinYMin");
+}
+
+const getProjection = (svg: any) => {
+    /**
+     * Return projection corresponding to d3 selected svg element.
+     */
+    const width = parseInt(svg.style("width")),
+          height = parseInt(svg.style("height")),
+          centerMarker = [-92., 37.], // projection needs [lon, lat];
+          zoom = 695,
+          projection = d3.geoMercator()
+            .center(centerMarker)
+            .scale(zoom)
+            .translate([ width / 2, height / 2 ]);
+  
+      return projection;
+}
+
+const addMapToProjection = (svg: any, translation: string, country: string) => {
+    /**
+     * Using d3 selected svg element and computed translation, project country visual to svg.
+     */
     d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
 
+        const projection = getProjection(svg);
+
         // Filter data
-        data.features = data.features.filter( function(d){return d.properties.name=="USA"} );
+        data.features = data.features.filter( function(d){return d.properties.name==country} );
 
         // Draw the map
         svg.append("g")
@@ -30,9 +66,7 @@ const addMapToProjection = (svg: any, projection: any, translation: any) => {
             .enter()
             .append("path")
             .attr("fill", "#b8b8b8")
-            .attr("d", d3.geoPath()
-                    .projection(projection)
-                )
+            .attr("d", d3.geoPath().projection(projection))
             .style("stroke", "black")
             .style("opacity", .3);
     
@@ -41,28 +75,12 @@ const addMapToProjection = (svg: any, projection: any, translation: any) => {
     });
 }
 
-// TODO refactor exported functions
-export const markerIsContiguousUsa = (lat: Number, lon: Number) => {
-    if (lat >= 19.50139 && lat <= 64.85694 && lon >= -161.75583 && lon <= -68.01197) {
-        return true;
-    } else {
-        return false;
-    }
-}
+const drawCirclesOnMap = (svg: any, markers: Array<Object>, translation: string, name: string, size: number) => {
+    /**
+     * Using d3 selected svg element draw markers on map corresponding to svg-based projection. Assign class and size.
+     */
+    const projection = getProjection(svg);
 
-export const markersAreContiguousUsa = (markers: any) => {
-    let areContiguous = true;
-    for (let i = 0; i < markers.length; i++) {
-        if (!markerIsContiguousUsa(markers[i].latitude, markers[i].longitude)) {
-            areContiguous = false;
-        }
-    }
-
-    return areContiguous;
-}
-
-
-const drawCirclesOnMap = (svg: any, markers: Array<Object>, projection: any, translation: any, name: string, size: number) => {
     svg.selectAll("myCircles")
         .data(markers)
         .enter()
@@ -78,72 +96,75 @@ const drawCirclesOnMap = (svg: any, markers: Array<Object>, projection: any, tra
         .attr("transform", translation);
 }
 
-const addOriginToMap = (svg: any, lat: Number, lon: Number, projection: any, translation: any) => {
-    const name = "originCircle";
-    const size = 8;
+const addOriginToMap = (svg: any, lat: Number, lon: Number, translation: any) => {
+    /**
+     * Using d3 selected svg element add origin to map.
+     */
+    const name = "originCircle",
+          size = 8;
+
     svg.selectAll("." + name).remove();
 
     const markers = [{"latitude": lat, "longitude": lon}];
-    drawCirclesOnMap(svg, markers, projection, translation, name, size);
+    drawCirclesOnMap(svg, markers, translation, name, size);
 }
 
-const addDemandToMap = (svg: any, markers: Array<Object>, projection: any, translation: any) => {
-    const name = "demandCircles";
-    const size = 3;
+const addDemandToMap = (svg: any, markers: Array<Object>, translation: any) => {
+    /**
+     * Using d3 selected svg element add demand to map.
+     */
+    const name = "demandCircles",
+          size = 3;
+
     svg.selectAll("." + name).remove();
     
-    drawCirclesOnMap(svg, markers, projection, translation, name, size);
+    drawCirclesOnMap(svg, markers, translation, name, size);
 }
 
 const VrpBubbleMap = (props) => {
+    /**
+     * Map component function exported to parent.
+     */
     const svgRef = useRef(null),
           margin = {top: 50, right: 20, bottom: 20, left: 20},
-          zoom = 625,
-          translation = "translate(" + margin.left + "," + margin.top + ")",
-          centerMarker = [-92., 37.]; // projection needs [lon, lat];
+          translation = getTranslation(margin);
 
     useEffect(() => {
+        /**
+         * Tie to  demand file state.
+         */
         const svg = getSvg(svgRef),
-              width = parseInt(svg.style("width")),
-              height = parseInt(svg.style("height")),
-              projection = createGeoProjection(centerMarker, height, width, zoom),
               markers = props.demandMarkers;
 
         if (!markers) {
             return;
         }
 
-        if (markersAreContiguousUsa(markers)) {
-            addDemandToMap(svg, markers, projection, translation);
+        if (utils.markersAreContiguousUsa(markers)) {
+            addDemandToMap(svg, markers, translation);
         }
     });
 
-    useEffect(() => {
+    useEffect(() => { 
+        /**
+         * Tie to origin lat lon state
+         */
         const svg = getSvg(svgRef),
-              width = parseInt(svg.style("width")),
-              height = parseInt(svg.style("height")),
-              projection = createGeoProjection(centerMarker, height, width, zoom),
               lat = props.originLat,
               lon = props.originLon;
 
-        if (markerIsContiguousUsa(lat, lon)) {
-            addOriginToMap(svg, lat, lon, projection, translation);
+        if (utils.markerIsContiguousUsa(lat, lon)) {
+            addOriginToMap(svg, lat, lon, translation);
         }
     });
    
     useEffect(() => {
-        const svg = getSvg(svgRef),
-              width = parseInt(svg.style("width")),
-              height = parseInt(svg.style("height")),
-              adjustedWidth = width + margin.left + margin.right,
-              adjustedHeight = height + margin.top + margin.bottom;
-        
-        svg.attr("viewBox", "0 0 " + adjustedWidth + " " + adjustedHeight)
-            .attr("preserveAspectRatio", "xMinYMin");
-
-        const projection = createGeoProjection(centerMarker, height, width, zoom);
-
-        addMapToProjection(svg, projection, translation);
+        /**
+         * init
+         */
+        const svg = getSvg(svgRef);
+        updateSvgSize(svg, margin);
+        addMapToProjection(svg, translation, "USA");
     }, []);
 
     return (<svg ref={svgRef} height={props.height} width={props.width}></svg>);
