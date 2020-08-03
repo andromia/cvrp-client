@@ -12,6 +12,22 @@ const StyledContainer = styled.div`
     display: flex;
     width: 100%;
     align-items: ${props => (props.middle ? "center" : "")};
+
+    .svg-container {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        padding-bottom: 100%;
+        vertical-align: top;
+        overflow: hidden;
+    }
+    .svg-content {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
 `;
 
 export default StyledContainer;

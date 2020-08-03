@@ -31,7 +31,8 @@ const updateSvgSize = (svg: any, margin: any) => {
           adjustedHeight = height + margin.top + margin.bottom;
         
     svg.attr("viewBox", "0 0 " + adjustedWidth + " " + adjustedHeight)
-        .attr("preserveAspectRatio", "xMinYMin");
+        .attr("preserveAspectRatio", "xMinYMin")
+        .classed("svg-content", true);
 }
 
 const getProjection = (svg: any) => {
@@ -129,7 +130,7 @@ const VrpBubbleMap = (props) => {
      * Map component function exported to parent.
      */
     const svgRef = useRef(null),
-          margin = {top: 50, right: 20, bottom: 20, left: 20},
+          margin = {top: 50, right: 50, bottom: 0, left: 50},
           translation = getTranslation(margin);
 
     useEffect(() => {
@@ -165,13 +166,13 @@ const VrpBubbleMap = (props) => {
         /**
          * init
          */
-        const svg = getSvg(svgRef);
+        const svg = getSvg(svgRef)
 
         updateSvgSize(svg, margin);
         addMapToProjection(svg, translation);
     }, []);
 
-    return (<svg ref={svgRef} height={props.height} width={props.width}></svg>);
+    return (<div id="container" className="svg-container"><svg ref={svgRef} height={props.height} width={props.width} /></div>);
 }
   
 export default VrpBubbleMap;
