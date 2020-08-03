@@ -132,15 +132,21 @@ const FormSetup = () => {
 
         setAnimation(true);
 
-        /*getVrpSolution({
+        getVrpSolution({
             origin_latitude: originLat,
             origin_longitude: originLon,
             vehicle_max_capacity_quantity: vehicleCap,
             vehicle_definitions: [], // TODO: remove this for MVP
             unit: vehicleUnit,
             demand: demandMarkers,
-        });*/
+        });
 
+        /**
+         * TODO: setState functions don't complete the update of state until scope is returned.
+         * isAnimating should trigger the animation of markers on the map to represent solving.
+         * when solves are completed isAnimation should return to false and routes should be 
+         * visualized with the colors reset or changed according to their assigment.
+         */
     };
 
     return (

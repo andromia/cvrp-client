@@ -124,7 +124,7 @@ const addDemandToMap = (svg: any, markers: Array<Object>, translation: any) => {
 }
 
 const animateSvg = (svg: any) => {
-
+    // TODO
 }
 
 const VrpBubbleMap = (props) => {
