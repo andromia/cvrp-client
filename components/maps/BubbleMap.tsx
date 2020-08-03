@@ -26,11 +26,9 @@ const updateSvgSize = (svg: any, margin: any) => {
      * Update d3 selected svg with viewBoc using margin-adjusted height and width.
      */
     const width = parseInt(svg.style("width")),
-          height = parseInt(svg.style("height")),
-          adjustedWidth = width + margin.left + margin.right,
-          adjustedHeight = height + margin.top + margin.bottom;
+          height = parseInt(svg.style("height"));
         
-    svg.attr("viewBox", "0 0 " + adjustedWidth + " " + adjustedHeight)
+    svg.attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMinYMin")
         .classed("svg-content", true);
 }
@@ -42,7 +40,7 @@ const getProjection = (svg: any) => {
     const width = parseInt(svg.style("width")),
           height = parseInt(svg.style("height")),
           centerMarker = [-92., 37.], // projection needs [lon, lat];
-          zoom = 695,
+          zoom = 550,
           projection = d3.geoMercator()
             .center(centerMarker)
             .scale(zoom)
