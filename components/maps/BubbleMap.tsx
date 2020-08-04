@@ -4,6 +4,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
 import * as utils from "./Utils";
+import { useUsaJson } from "./MapJson";
 import * as GeoTypes from "../types/geo";
 
 
@@ -34,30 +35,22 @@ const getProjectionFromSvg = (svg: any) => {
       return projection;
 }
 
-const addUsaMapToSvg = (svg: any) => {
+const addUsaMapToSvg = (svg: any, geoJson: any) => {
     /**
      * Using d3 selected svg element and computed translation, TODO: project country visual to svg.
      */
-    d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
-        
-        const projection = getProjectionFromSvg(svg);
+    const projection = getProjectionFromSvg(svg);
+    geoJson.features = geoJson.features.filter( function(d){return d.properties.name=="USA"} );
 
-        // Filter data
-        data.features = data.features.filter( function(d){return d.properties.name=="USA"} );
-
-        // Draw the map
-        svg.join("g")
-            .selectAll("path")
-            .data(data.features)
-            .join("path")
-            .attr("fill", "#b8b8b8")
-            .attr("d", d3.geoPath().projection(projection))
-            .style("stroke", "black")
-            .style("opacity", .3);
-    
-    }).catch(function(error) { 
-        console.log("error", error);
-    });
+    // Draw the map
+    svg.join("g")
+        .selectAll("path")
+        .data(geoJson.features)
+        .join("path")
+        .attr("fill", "#b8b8b8")
+        .attr("d", d3.geoPath().projection(projection))
+        .style("stroke", "black")
+        .style("opacity", .3);
 }
 
 const addMarkersToMap = (svg: any, markers: Array<Object>, name: string, size: number) => {
@@ -113,9 +106,9 @@ const drawOrigin = (svg: any, lat: number, lon: number) => {
     }
 }
 
-const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any) => {
+const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, geoJson: any) => {
     updateSvgSize(svg);
-    addUsaMapToSvg(svg);
+    addUsaMapToSvg(svg, geoJson);
 
     if (oLat && oLon) {
         drawOrigin(svg, oLat, oLon);
@@ -131,6 +124,7 @@ const VrpBubbleMap = (props) => {
      * Map component function exported to parent.
      */
     const svgRef = useRef(null),
+          usaJson = useUsaJson(),
           [originLatState, setOriginLat] = useState(999.),
           [originLonState, setOriginLon] = useState(999.),
           [demandState, setDemand] = useState(Object);
@@ -141,7 +135,11 @@ const VrpBubbleMap = (props) => {
               oLon = props.originLon,
               demand = props.demandMarkers;
 
-        drawVrpMap(svg, demand, oLat, oLon);
+        if (!usaJson) {
+            return;
+        } 
+
+        drawVrpMap(svg, demand, oLat, oLon, usaJson);
         drawOrigin(svg, oLat, oLon);
         drawDemand(svg, demand);
 
@@ -150,7 +148,7 @@ const VrpBubbleMap = (props) => {
         setDemand(demand);
 
         window.addEventListener('resize', function() {
-            drawVrpMap(svg, originLatState, originLonState, demandState);
+            drawVrpMap(svg, originLatState, originLonState, demandState, usaJson);
         });
     });
 
