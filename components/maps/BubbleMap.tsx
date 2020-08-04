@@ -7,21 +7,7 @@ import * as utils from "./Utils";
 import * as GeoTypes from "../types/geo";
 
 
-const getSvg = (ref: any) => {
-    /**
-     * Return d3 control over ref virtualization.
-     */
-    return d3.select(ref.current);
-}
-
-const getTranslation = (margin: any) => { 
-    /**
-     * Return translation string corresponding to margins.
-     */
-    return "translate(" + margin.left + "," + margin.top + ")";
-}
-
-const updateSvgSize = (svg: any, margin: any) => {
+const updateSvgSize = (svg: any) => {
     /**
      * Update d3 selected svg with viewBoc using margin-adjusted height and width.
      */
@@ -32,7 +18,7 @@ const updateSvgSize = (svg: any, margin: any) => {
         .classed("svg-content", true);
 }
 
-const getProjection = (svg: any) => {
+const getProjectionFromSvg = (svg: any) => {
     /**
      * Return projection corresponding to d3 selected svg element.
      */
@@ -48,20 +34,19 @@ const getProjection = (svg: any) => {
       return projection;
 }
 
-const addMapToProjection = (svg: any, translation: string) => {
+const addUsaMapToSvg = (svg: any) => {
     /**
      * Using d3 selected svg element and computed translation, TODO: project country visual to svg.
      */
     d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
         
-        const projection = getProjection(svg);
+        const projection = getProjectionFromSvg(svg);
 
         // Filter data
         data.features = data.features.filter( function(d){return d.properties.name=="USA"} );
 
         // Draw the map
         svg.join("g")
-            //.attr("transform", translation)
             .selectAll("path")
             .data(data.features)
             .join("path")
@@ -75,11 +60,11 @@ const addMapToProjection = (svg: any, translation: string) => {
     });
 }
 
-const drawCirclesOnMap = (svg: any, markers: Array<Object>, translation: string, name: string, size: number) => {
+const addMarkersToMap = (svg: any, markers: Array<Object>, name: string, size: number) => {
     /**
      * Using d3 selected svg element draw markers on map corresponding to svg-based projection. Assign class and size.
      */
-    const projection = getProjection(svg);
+    const projection = getProjectionFromSvg(svg);
 
     svg.selectAll("myCircles")
         .data(markers)
@@ -91,33 +76,54 @@ const drawCirclesOnMap = (svg: any, markers: Array<Object>, translation: string,
         .style("fill", "69b3a2")
         .attr("stroke", "#69b3a2")
         .attr("stroke-width", (size/4))
-        .attr("fill-opacity", .4)
-        //.attr("transform", translation);
+        .attr("fill-opacity", .4);
 }
 
-const addOriginToMap = (svg: any, lat: any, lon: any, translation: any) => {
+const drawDemand = (svg: any, markers: Array<object>) => {
+    /**
+    * Using d3 selected svg element add demand to map.
+    */
+    if (!markers) {
+        return;
+    }
+
+    if (utils.markersAreContiguousUsa(markers)) {
+        const name = "demandCircles",
+        size = 3;
+
+        svg.selectAll("." + name).remove();
+
+        addMarkersToMap(svg, markers, name, size);
+    }
+}
+
+const drawOrigin = (svg: any, lat: number, lon: number) => {
     /**
      * Using d3 selected svg element add origin to map.
      */
-    const name = "originCircle",
-          size = 8;
+    if (utils.markerIsContiguousUsa(lat, lon)) {
+        const name = "originCircle",
+        size = 8;
 
-    svg.selectAll("." + name).remove();
+        svg.selectAll("." + name).remove();
 
-    const markers = [{"latitude": lat, "longitude": lon}];
-    drawCirclesOnMap(svg, markers, translation, name, size);
+        const markers = [{"latitude": lat, "longitude": lon}];
+        
+        addMarkersToMap(svg, markers, name, size);
+    }
 }
 
-const addDemandToMap = (svg: any, markers: any, translation: any) => {
-    /**
-     * Using d3 selected svg element add demand to map.
-     */
-    const name = "demandCircles",
-          size = 3;
+const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any) => {
+    updateSvgSize(svg);
+    addUsaMapToSvg(svg);
 
-    svg.selectAll("." + name).remove();
+    if (oLat && oLon) {
+        drawOrigin(svg, oLat, oLon);
+    }
     
-    drawCirclesOnMap(svg, markers, translation, name, size);
+    if (demand) {
+        drawDemand(svg, demand);
+    }
 }
 
 const VrpBubbleMap = (props) => {
@@ -125,58 +131,27 @@ const VrpBubbleMap = (props) => {
      * Map component function exported to parent.
      */
     const svgRef = useRef(null),
-          [originLat, setOriginLat] = useState(),
-          [originLon, setOriginLon] = useState(),
-          [demandMarkers, setDemandMarkers] = useState(),
-          margin = {top: 10, right: 50, bottom: 0, left: 50},
-          translation = getTranslation(margin);
-
-    const drawDemand = (svg: any) => {
-        const markers = props.demandMarkers;
-
-        if (!markers) {
-            return;
-        }
-
-        if (utils.markersAreContiguousUsa(markers)) {
-            setDemandMarkers(markers);
-            addDemandToMap(svg, markers, translation);
-        }
-    }
-
-    const drawOrigin = (svg: any) => {
-        const lat = props.originLat,
-              lon = props.originLon;
-
-        if (utils.markerIsContiguousUsa(lat, lon)) {
-            setOriginLat(lat);
-            setOriginLon(lon);
-            addOriginToMap(svg, lat, lon, translation);
-        }
-    }
-
-    const drawMap = () => {
-        const svg = getSvg(svgRef);
-
-        updateSvgSize(svg, margin);
-        addMapToProjection(svg, translation);
-
-        if (originLat && originLon) {
-            addOriginToMap(svg, originLat, originLon, translation);
-        }
-        
-        if (demandMarkers) {
-            addDemandToMap(svg, demandMarkers, translation);
-        }
-    }
+          [originLatState, setOriginLat] = useState(999.),
+          [originLonState, setOriginLon] = useState(999.),
+          [demandState, setDemand] = useState(Object);
 
     useEffect(() => {
-        const svg = getSvg(svgRef);
+        const svg = d3.select(svgRef.current),
+              oLat = props.originLat,
+              oLon = props.originLon,
+              demand = props.demandMarkers;
 
-        drawMap();
-        drawOrigin(svg);
-        drawDemand(svg); 
-        window.addEventListener('resize', drawMap);
+        drawVrpMap(svg, demand, oLat, oLon);
+        drawOrigin(svg, oLat, oLon);
+        drawDemand(svg, demand);
+
+        setOriginLat(oLat);
+        setOriginLon(oLon);
+        setDemand(demand);
+
+        window.addEventListener('resize', function() {
+            drawVrpMap(svg, originLatState, originLonState, demandState);
+        });
     });
 
     return (<div id="container" className="svg-container"><svg ref={svgRef} height={props.height} width={props.width} /></div>);
