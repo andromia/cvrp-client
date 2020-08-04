@@ -3,7 +3,7 @@
  */
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
-import * as utils from "./utils";
+import * as utils from "./Utils";
 import * as GeoTypes from "../types/geo";
 
 
@@ -29,7 +29,6 @@ const updateSvgSize = (svg: any, margin: any) => {
           height = parseInt(svg.style("height"));
         
     svg.attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMeet")
         .classed("svg-content", true);
 }
 
@@ -39,7 +38,7 @@ const getProjection = (svg: any) => {
      */
     const width = parseInt(svg.style("width")),
           height = parseInt(svg.style("height")),
-          centerMarker = [-92., 37.], // projection needs [lon, lat];
+          centerMarker = [-98, 39], // projection needs [lon, lat];
           zoom = 550,
           projection = d3.geoMercator()
             .center(centerMarker)
@@ -54,19 +53,18 @@ const addMapToProjection = (svg: any, translation: string) => {
      * Using d3 selected svg element and computed translation, TODO: project country visual to svg.
      */
     d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
-
+        
         const projection = getProjection(svg);
 
         // Filter data
         data.features = data.features.filter( function(d){return d.properties.name=="USA"} );
 
         // Draw the map
-        svg.append("g")
-            .attr("transform", translation)
+        svg.join("g")
+            //.attr("transform", translation)
             .selectAll("path")
             .data(data.features)
-            .enter()
-            .append("path")
+            .join("path")
             .attr("fill", "#b8b8b8")
             .attr("d", d3.geoPath().projection(projection))
             .style("stroke", "black")
@@ -94,10 +92,10 @@ const drawCirclesOnMap = (svg: any, markers: Array<Object>, translation: string,
         .attr("stroke", "#69b3a2")
         .attr("stroke-width", (size/4))
         .attr("fill-opacity", .4)
-        .attr("transform", translation);
+        //.attr("transform", translation);
 }
 
-const addOriginToMap = (svg: any, lat: Number, lon: Number, translation: any) => {
+const addOriginToMap = (svg: any, lat: any, lon: any, translation: any) => {
     /**
      * Using d3 selected svg element add origin to map.
      */
@@ -110,7 +108,7 @@ const addOriginToMap = (svg: any, lat: Number, lon: Number, translation: any) =>
     drawCirclesOnMap(svg, markers, translation, name, size);
 }
 
-const addDemandToMap = (svg: any, markers: Array<Object>, translation: any) => {
+const addDemandToMap = (svg: any, markers: any, translation: any) => {
     /**
      * Using d3 selected svg element add demand to map.
      */
@@ -122,67 +120,64 @@ const addDemandToMap = (svg: any, markers: Array<Object>, translation: any) => {
     drawCirclesOnMap(svg, markers, translation, name, size);
 }
 
-const animateSvg = (svg: any) => {
-    // TODO
-}
-
 const VrpBubbleMap = (props) => {
     /**
      * Map component function exported to parent.
      */
     const svgRef = useRef(null),
+          [originLat, setOriginLat] = useState(),
+          [originLon, setOriginLon] = useState(),
+          [demandMarkers, setDemandMarkers] = useState(),
           margin = {top: 10, right: 50, bottom: 0, left: 50},
           translation = getTranslation(margin);
 
-
-    useEffect(() => {
-        const isAnimating = props.isAnimating;
-
-        if (isAnimating == true) { 
-            const svg = getSvg(svgRef);
-            
-            animateSvg(svg);
-        }
-    })
-    
-    useEffect(() => {
-        /**
-         * Tie to  demand file state.
-         */
-        const svg = getSvg(svgRef),
-              markers = props.demandMarkers;
+    const drawDemand = (svg: any) => {
+        const markers = props.demandMarkers;
 
         if (!markers) {
             return;
         }
 
         if (utils.markersAreContiguousUsa(markers)) {
+            setDemandMarkers(markers);
             addDemandToMap(svg, markers, translation);
         }
-    });
+    }
 
-    useEffect(() => { 
-        /**
-         * Tie to origin lat lon state
-         */
-        const svg = getSvg(svgRef),
-              lat = props.originLat,
+    const drawOrigin = (svg: any) => {
+        const lat = props.originLat,
               lon = props.originLon;
 
         if (utils.markerIsContiguousUsa(lat, lon)) {
+            setOriginLat(lat);
+            setOriginLon(lon);
             addOriginToMap(svg, lat, lon, translation);
         }
-    });
-   
-    useEffect(() => {
-        /**
-         * init
-         */
-        const svg = getSvg(svgRef)
+    }
+
+    const drawMap = () => {
+        const svg = getSvg(svgRef);
 
         updateSvgSize(svg, margin);
         addMapToProjection(svg, translation);
-    }, []);
+
+        if (originLat && originLon) {
+            addOriginToMap(svg, originLat, originLon, translation);
+        }
+        
+        if (demandMarkers) {
+            addDemandToMap(svg, demandMarkers, translation);
+        }
+    }
+
+    useEffect(() => {
+        const svg = getSvg(svgRef);
+
+        drawMap();
+        drawOrigin(svg);
+        drawDemand(svg); 
+        window.addEventListener('resize', drawMap);
+    });
 
     return (<div id="container" className="svg-container"><svg ref={svgRef} height={props.height} width={props.width} /></div>);
 }

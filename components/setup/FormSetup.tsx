@@ -9,12 +9,15 @@ import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import VrpBubbleMap from "../maps/BubbleMap";
-import * as mapUtils from "../maps/utils";
+import * as mapUtils from "../maps/Utils";
 import Button from "react-bootstrap/Button";
 
 
 const axios = require('axios');
 const defaultMarkers = [{"latitude": -999., "longitude": -999.}];
+
+const chartHeight = 350;
+const chartWidth = 600;
 
 const checkFileData = (data: Object) => {
     // TODO: expand on this
