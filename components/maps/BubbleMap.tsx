@@ -106,6 +106,14 @@ const drawOrigin = (svg: any, lat: number, lon: number) => {
     }
 }
 
+const drawRoutes = (svg: any, demand: Array<object>, vehicles: Array<number>, stops: Array<number>) => {
+    /**
+     * Draw each node with a segment between it and its next stop along 
+     * the route it belongs to. For example, vehicle 1 may have stop 
+     * numbers 1, 2, 3. A line should be drawn from 1, to 2, to 3.
+     */
+}
+
 const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, geoJson: any) => {
     updateSvgSize(svg);
     addUsaMapToSvg(svg, geoJson);
@@ -125,30 +133,32 @@ const VrpBubbleMap = (props) => {
      */
     const svgRef = useRef(null),
           usaJson = useUsaJson(),
-          [originLatState, setOriginLat] = useState(999.),
-          [originLonState, setOriginLon] = useState(999.),
-          [demandState, setDemand] = useState(Object);
+          [originLat, setOriginLat] = useState(999.),
+          [originLon, setOriginLon] = useState(999.),
+          [demand, setDemand] = useState(Object),
+          [vehicles, setVehicles] = useState(null),
+          [stops, setStops] = useState(null);
 
     useEffect(() => {
-        const svg = d3.select(svgRef.current),
-              oLat = props.originLat,
-              oLon = props.originLon,
-              demand = props.demandMarkers;
+        const svg = d3.select(svgRef.current);
+
+        setOriginLat(props.originLat);
+        setOriginLon(props.originLon);
+        setDemand(props.demand);
+        setVehicles(props.vehicles);
+        setStops(props.setStops);
 
         if (!usaJson) {
             return;
         } 
 
-        drawVrpMap(svg, demand, oLat, oLon, usaJson);
-        drawOrigin(svg, oLat, oLon);
-        drawDemand(svg, demand);
-
-        setOriginLat(oLat);
-        setOriginLon(oLon);
-        setDemand(demand);
+        drawVrpMap(svg, props.originLat, props.originLon, props.demand, usaJson);
+        drawOrigin(svg, props.originLat, props.originLon);
+        drawDemand(svg, props.demand);
+        drawRoutes(svg, props.demand, props.vehicles, props.stops);
 
         window.addEventListener('resize', function() {
-            drawVrpMap(svg, originLatState, originLonState, demandState, usaJson);
+            drawVrpMap(svg, originLat, originLon, demand, usaJson);
         });
     });
 

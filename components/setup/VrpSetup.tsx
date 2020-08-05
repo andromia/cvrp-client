@@ -58,12 +58,20 @@ const getVrpSolution = (data: any) => {
      * 
      * Returns raw response data.
      */
+    let result;
+
     axios.post(process.env.dev.VRP_RPC_URL, data)
       .then(function (response) {
         console.log(response);
+
+        result = response.data;
       }).catch(function (error) {
         console.log(error);
+
+        result = error;
       });
+
+    return result;
 }
 
 const VrpSetup = () => {
@@ -82,7 +90,9 @@ const VrpSetup = () => {
           [vehicleCap, setVehicleCap] = useState(-999.9),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
-          [demandMarkers, setDemandMarkers] = useState(defaultMarkers);
+          [demandMarkers, setDemandMarkers] = useState(defaultMarkers),
+          [vehicles, setVehicles] = useState(null),
+          [stops, setStops] = useState(null);
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
@@ -202,7 +212,8 @@ const VrpSetup = () => {
             alert("demand latitudes and longitudes must be within the contiguous USA!");
         }
 
-        getVrpSolution({
+        // TODO: create asynchronous call
+        const response = getVrpSolution({
             origin_latitude: originLat,
             origin_longitude: originLon,
             vehicle_max_capacity_quantity: vehicleCap,
@@ -210,6 +221,13 @@ const VrpSetup = () => {
             unit: vehicleUnit,
             demand: demandMarkers,
         });
+
+        if (response?.vehicle_id) {
+            setVehicles(response.vehicle_id);
+        }
+        if (response?.stop_num) {
+            setStops(response.stop_num);
+        }
     };
 
     return (
@@ -284,6 +302,8 @@ const VrpSetup = () => {
                             originLat={originLat} 
                             originLon={originLon} 
                             demandMarkers={demandMarkers}
+                            vehicles={vehicles}
+                            stops={stops}
                             width={"100%"} 
                             height={375} />
                         </Col>
