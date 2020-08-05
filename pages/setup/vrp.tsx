@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 
 import Search from "../../components/setup/Search";
-import FormSetup from "../../components/setup/FormSetup";
+import VrpSetup from "../../components/setup/VrpSetup";
 
 
 const VRP = () => {
@@ -17,7 +17,7 @@ const VRP = () => {
                     <Search />
                 </Col>
                 <Col className="pt-3">
-                    <FormSetup />
+                    <VrpSetup />
                 </Col>
             </Row>
         </Container>

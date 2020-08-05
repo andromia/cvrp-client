@@ -152,7 +152,14 @@ const VrpBubbleMap = (props) => {
         });
     });
 
-    return (<div id="container" className="svg-container"><svg ref={svgRef} height={props.height} width={props.width} /></div>);
+    return (<div 
+            id="container" 
+            className="svg-container">
+                <svg 
+                ref={svgRef} 
+                height={props.height} 
+                width={props.width} />
+            </div>);
 }
   
 export default VrpBubbleMap;
