@@ -1,5 +1,9 @@
 /**
  * NOTE: this map is limited to contiguous USA for initial versions.
+ * 
+ * TODO:
+ *   - refactor for agnostic components
+ *   - improve general performance
  */
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
@@ -69,7 +73,23 @@ const addMarkersToMap = (svg: any, markers: Array<Object>, name: string, size: n
         .style("fill", "69b3a2")
         .attr("stroke", "#69b3a2")
         .attr("stroke-width", (size/4))
-        .attr("fill-opacity", .4);
+        .attr("fill-opacity", .4)
+        .on("mouseover", function(d) {
+            d3.select(this)
+                .style("stroke", "black")
+                .style("stroke-width", (size/2))
+                .style("opacity", 1)
+            })
+        .on("mousemove", function(d) {
+            d3.select(this).append("svg:title")
+                .text(function(d) { return "lat: " + d.longitude + ", lon: " + d.latitude; });
+            })
+        .on("mouseleave", function(d) {
+            d3.select(this)
+                .style("stroke", "#69b3a2")
+                .style("stroke-width", (size/4))
+                .style("fill-opacity", .4)
+        });
 }
 
 const drawDemand = (svg: any, markers: Array<object>) => {
@@ -112,9 +132,17 @@ const drawRoutes = (svg: any, demand: Array<object>, vehicles: Array<number>, st
      * the route it belongs to. For example, vehicle 1 may have stop 
      * numbers 1, 2, 3. A line should be drawn from 1, to 2, to 3.
      */
+    const projection = getProjectionFromSvg(svg);
+
+    if (vehicles?.length > 0) {
+    }
 }
 
-const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, geoJson: any) => {
+const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, vehicles: any, stops: any, geoJson: any) => {
+    /**
+     * Handler for drawing the map from property change
+     * or states on resize.
+     */
     updateSvgSize(svg);
     addUsaMapToSvg(svg, geoJson);
 
@@ -124,6 +152,10 @@ const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, geoJson: any) =
     
     if (demand) {
         drawDemand(svg, demand);
+    }
+
+    if (vehicles & stops) {
+        drawRoutes(svg, demand, vehicles, stops);
     }
 }
 
@@ -152,13 +184,13 @@ const VrpBubbleMap = (props) => {
             return;
         } 
 
-        drawVrpMap(svg, props.originLat, props.originLon, props.demand, usaJson);
+        drawVrpMap(svg, props.originLat, props.originLon, props.demand, props.vehicles, props.stops, usaJson);
         drawOrigin(svg, props.originLat, props.originLon);
         drawDemand(svg, props.demand);
         drawRoutes(svg, props.demand, props.vehicles, props.stops);
 
         window.addEventListener('resize', function() {
-            drawVrpMap(svg, originLat, originLon, demand, usaJson);
+            drawVrpMap(svg, originLat, originLon, demand, vehicles, stops, usaJson);
         });
     });
 

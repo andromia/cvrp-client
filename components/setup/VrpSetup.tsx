@@ -52,28 +52,6 @@ const checkUnit = (unit: String, data: any) => {
     }
 }
 
-const getVrpSolution = (data: any) => {
-    /**
-     * API utility for vrp-rpc post handling.
-     * 
-     * Returns raw response data.
-     */
-    let result;
-
-    axios.post(process.env.dev.VRP_RPC_URL, data)
-      .then(function (response) {
-        console.log(response);
-
-        result = response.data;
-      }).catch(function (error) {
-        console.log(error);
-
-        result = error;
-      });
-
-    return result;
-}
-
 const VrpSetup = () => {
     /**
      * Setup page for VRP module. 
@@ -90,7 +68,7 @@ const VrpSetup = () => {
           [vehicleCap, setVehicleCap] = useState(-999.9),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
-          [demandMarkers, setDemandMarkers] = useState(defaultMarkers),
+          [demand, setDemand] = useState(defaultMarkers),
           [vehicles, setVehicles] = useState(null),
           [stops, setStops] = useState(null);
 
@@ -137,7 +115,7 @@ const VrpSetup = () => {
             complete: function(results) {
                 checkFileData(results.data);
 
-                setDemandMarkers(results.data);
+                setDemand(results.data);
             }
         });
     };
@@ -199,8 +177,8 @@ const VrpSetup = () => {
             return;
         }
         
-        if (demandMarkers != defaultMarkers) {
-            checkUnit(vehicleUnit, demandMarkers);
+        if (demand != defaultMarkers) {
+            checkUnit(vehicleUnit, demand);
 
         } else {
             alert("demand file is invalid!");
@@ -208,26 +186,27 @@ const VrpSetup = () => {
             return;
         }
 
-        if (!mapUtils.markersAreContiguousUsa(demandMarkers)) {
+        if (!mapUtils.markersAreContiguousUsa(demand)) {
             alert("demand latitudes and longitudes must be within the contiguous USA!");
         }
 
         // TODO: create asynchronous call
-        const response = getVrpSolution({
-            origin_latitude: originLat,
-            origin_longitude: originLon,
-            vehicle_max_capacity_quantity: vehicleCap,
-            vehicle_definitions: [], // TODO: remove this for MVP
-            unit: vehicleUnit,
-            demand: demandMarkers,
-        });
-
-        if (response?.vehicle_id) {
-            setVehicles(response.vehicle_id);
-        }
-        if (response?.stop_num) {
-            setStops(response.stop_num);
-        }
+        axios.post(
+            process.env.dev.VRP_RPC_URL,
+            {   origin_latitude: originLat,
+                origin_longitude: originLon,
+                vehicle_max_capacity_quantity: vehicleCap,
+                vehicle_definitions: [], // TODO: remove this for MVP
+                unit: vehicleUnit,
+                demand: demand}
+            ).then(function (response) {
+                console.log(response);
+                setVehicles(response.data.vehicle_id);
+                setStops(response.data.stop_num);
+            }).catch(function (error) {
+                console.log(error);
+                return error;
+            });
     };
 
     return (
@@ -301,7 +280,7 @@ const VrpSetup = () => {
                             <VrpBubbleMap 
                             originLat={originLat} 
                             originLon={originLon} 
-                            demandMarkers={demandMarkers}
+                            demand={demand}
                             vehicles={vehicles}
                             stops={stops}
                             width={"100%"} 
