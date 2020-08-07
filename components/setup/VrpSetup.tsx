@@ -308,8 +308,15 @@ const VrpSetup = () => {
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
+                        <style type="text/css">
+                        {`
+                            .download-btn {
+                                background-color: #4CAF50;
+                            }
+                        `}
+                        </style>
                         {vehicles.length > 0 &&
-                            <a href={csvUrl}><Button background-color="#4CAF50">Download</Button></a>
+                            <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                         }
                         <Col lg="8">
                             <Form.File 
