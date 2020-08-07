@@ -197,17 +197,18 @@ const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, vehicles: any, 
     updateSvgSize(svg);
     addUsaMapToSvg(svg, geoJson);
 
-    if (oLat && oLon) {
-        drawOrigin(svg, oLat, oLon);
+    if (vehicles) {
+        drawRoutes(svg, oLat, oLon, demand, vehicles, stops);
     }
     
     if (demand) {
         drawDemand(svg, demand);
     }
 
-    if (vehicles) {
-        drawRoutes(svg, oLat, oLon, demand, vehicles, stops);
+    if (oLat && oLon) {
+        drawOrigin(svg, oLat, oLon);
     }
+
 }
 
 const VrpBubbleMap = (props) => {
