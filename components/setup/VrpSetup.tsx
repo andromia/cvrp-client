@@ -69,8 +69,9 @@ const VrpSetup = () => {
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
           [demand, setDemand] = useState(defaultMarkers),
-          [vehicles, setVehicles] = useState(null),
-          [stops, setStops] = useState(null);
+          [vehicles, setVehicles] = useState(Array),
+          [stops, setStops] = useState(Array),
+          [csvUrl, setCsvUrl] = useState("");
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
@@ -203,6 +204,24 @@ const VrpSetup = () => {
                 console.log(response);
                 setVehicles(response.data.vehicle_id);
                 setStops(response.data.stop_num);
+
+                if (response.data.vehicle_id.length == 0 || response.data.stop_num.length == 0) {
+                    return;
+                }
+        
+                const data: object[] = []; 
+                demand.forEach(val => data.push(Object.assign({}, val)));
+        
+                for (var i = 0; i < demand.length; i++) {
+                    data[i]["vehicle_id"] = response.data.vehicle_id[i];
+                    data[i]["stop_num"] = response.data.stop_num[i];
+                }
+        
+                const csv = Papa.unparse(data);
+                const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+                const csvUrl = window.URL.createObjectURL(csvData);
+            
+                setCsvUrl(csvUrl);
             }).catch(function (error) {
                 console.log(error);
                 return error;
@@ -288,6 +307,9 @@ const VrpSetup = () => {
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
+                        {vehicles.length > 0 &&
+                            <a href={csvUrl}><Button background-color="#4CAF50">Download</Button></a>
+                        }
                         <Col lg="8">
                             <Form.File 
                             id="custom-file" 
