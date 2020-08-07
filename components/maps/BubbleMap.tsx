@@ -219,8 +219,8 @@ const VrpBubbleMap = (props) => {
           [originLat, setOriginLat] = useState(999.),
           [originLon, setOriginLon] = useState(999.),
           [demand, setDemand] = useState(Object),
-          [vehicles, setVehicles] = useState([]),
-          [stops, setStops] = useState([]);
+          [vehicles, setVehicles] = useState(Array),
+          [stops, setStops] = useState(Array);
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);

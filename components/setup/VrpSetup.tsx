@@ -194,13 +194,14 @@ const VrpSetup = () => {
         // TODO: create asynchronous call
         axios.post(
             process.env.dev.VRP_RPC_URL,
-            {   origin_latitude: originLat,
+            {   
+                origin_latitude: originLat,
                 origin_longitude: originLon,
                 vehicle_max_capacity_quantity: vehicleCap,
                 vehicle_definitions: [], // TODO: remove this for MVP
                 unit: vehicleUnit,
-                demand: demand}
-            ).then(function (response) {
+                demand: demand
+            }).then(function (response) {
                 console.log(response);
                 setVehicles(response.data.vehicle_id);
                 setStops(response.data.stop_num);
