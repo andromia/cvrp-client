@@ -82,7 +82,7 @@ const addMarkersToMap = (svg: any, markers: Array<Object>, name: string, size: n
             })
         .on("mousemove", function(d) {
             d3.select(this).append("svg:title")
-                .text(function(d) { return "lat: " + d.longitude + ", lon: " + d.latitude; });
+                .text(function(d) { return "lat: " + d.longitude + ", lon: " + d.latitude });
             })
         .on("mouseleave", function(d) {
             d3.select(this)
@@ -126,6 +126,42 @@ const drawOrigin = (svg: any, lat: number, lon: number) => {
     }
 }
 
+const createRouteLineStrings = (demand: any, vehicles: any, stops: any) => {
+    /**
+     * Create LineStrings for each route using vehicles (vehicle_id). 
+     * 
+     * NOTE: requires [lon, lat] order
+     * 
+     * TODO: 
+     *   - incorporate stops for ordering
+     *   - improve method (brute forced for MVP)
+     * 
+     * Returns a list of objects for {type: "LineString", coordinates: [[], ...]}
+     */
+    let routes = {};
+
+    for (var i = 0; i < demand.length; i++) {
+        if (routes.hasOwnProperty(vehicles[i])) {
+            routes[vehicles[i]].coordinates.push([demand[i].longitude, demand[i].latitude])
+        } else {
+            routes[vehicles[i]] = {
+                type: "LineString",
+                coordinates: [[demand[i].longitude, demand[i].latitude]]
+            }
+        }
+    }
+
+    // convert routes to list of objects
+    let lineStrings: object[] = [];
+    const keys = Object.keys(routes);
+
+    for (var i = 0; i < keys.length; i++) {
+        lineStrings.push(routes[keys[i]]);
+    }
+
+    return lineStrings;    
+}
+
 const drawRoutes = (svg: any, demand: Array<object>, vehicles: Array<number>, stops: Array<number>) => {
     /**
      * Draw each node with a segment between it and its next stop along 
@@ -133,8 +169,21 @@ const drawRoutes = (svg: any, demand: Array<object>, vehicles: Array<number>, st
      * numbers 1, 2, 3. A line should be drawn from 1, to 2, to 3.
      */
     const projection = getProjectionFromSvg(svg);
+    const path = d3.geoPath().projection(projection);
+    const g = svg.append("g");
+    const arcGroup = g.append("g");
 
     if (vehicles?.length > 0) {
+        const lineStrings = createRouteLineStrings(demand, vehicles, stops);
+
+        arcGroup.selectAll(".arc")
+            .data(lineStrings)
+            .join("path")
+            .style("fill", "none")
+            .style("stroke", '#0000ff')
+            .style("stroke-width", "2px")
+            .style("opacity", .3)
+            .attr("d", path);
     }
 }
 
@@ -154,7 +203,7 @@ const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, vehicles: any, 
         drawDemand(svg, demand);
     }
 
-    if (vehicles & stops) {
+    if (vehicles) {
         drawRoutes(svg, demand, vehicles, stops);
     }
 }
@@ -168,8 +217,8 @@ const VrpBubbleMap = (props) => {
           [originLat, setOriginLat] = useState(999.),
           [originLon, setOriginLon] = useState(999.),
           [demand, setDemand] = useState(Object),
-          [vehicles, setVehicles] = useState(null),
-          [stops, setStops] = useState(null);
+          [vehicles, setVehicles] = useState([]),
+          [stops, setStops] = useState([]);
 
     useEffect(() => {
         const svg = d3.select(svgRef.current);
@@ -178,16 +227,13 @@ const VrpBubbleMap = (props) => {
         setOriginLon(props.originLon);
         setDemand(props.demand);
         setVehicles(props.vehicles);
-        setStops(props.setStops);
+        setStops(props.stops);
 
         if (!usaJson) {
             return;
         } 
 
         drawVrpMap(svg, props.originLat, props.originLon, props.demand, props.vehicles, props.stops, usaJson);
-        drawOrigin(svg, props.originLat, props.originLon);
-        drawDemand(svg, props.demand);
-        drawRoutes(svg, props.demand, props.vehicles, props.stops);
 
         window.addEventListener('resize', function() {
             drawVrpMap(svg, originLat, originLon, demand, vehicles, stops, usaJson);
