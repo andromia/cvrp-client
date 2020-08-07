@@ -126,7 +126,7 @@ const drawOrigin = (svg: any, lat: number, lon: number) => {
     }
 }
 
-const createRouteLineStrings = (demand: any, vehicles: any, stops: any) => {
+const createRouteLineStrings = (oLat: number, oLon: number, demand: any, vehicles: any, stops: any) => {
     /**
      * Create LineStrings for each route using vehicles (vehicle_id). 
      * 
@@ -146,7 +146,7 @@ const createRouteLineStrings = (demand: any, vehicles: any, stops: any) => {
         } else {
             routes[vehicles[i]] = {
                 type: "LineString",
-                coordinates: [[demand[i].longitude, demand[i].latitude]]
+                coordinates: [[oLon, oLat], [demand[i].longitude, demand[i].latitude]]
             }
         }
     }
@@ -156,13 +156,15 @@ const createRouteLineStrings = (demand: any, vehicles: any, stops: any) => {
     const keys = Object.keys(routes);
 
     for (var i = 0; i < keys.length; i++) {
-        lineStrings.push(routes[keys[i]]);
+        let route = routes[keys[i]];
+        route.coordinates.push([oLon, oLat]);
+        lineStrings.push(route);
     }
 
     return lineStrings;    
 }
 
-const drawRoutes = (svg: any, demand: Array<object>, vehicles: Array<number>, stops: Array<number>) => {
+const drawRoutes = (svg: any, oLat: number, oLon: number, demand: Array<object>, vehicles: Array<number>, stops: Array<number>) => {
     /**
      * Draw each node with a segment between it and its next stop along 
      * the route it belongs to. For example, vehicle 1 may have stop 
@@ -174,7 +176,7 @@ const drawRoutes = (svg: any, demand: Array<object>, vehicles: Array<number>, st
     const arcGroup = g.append("g");
 
     if (vehicles?.length > 0) {
-        const lineStrings = createRouteLineStrings(demand, vehicles, stops);
+        const lineStrings = createRouteLineStrings(oLat, oLon, demand, vehicles, stops);
 
         arcGroup.selectAll(".arc")
             .data(lineStrings)
@@ -204,7 +206,7 @@ const drawVrpMap = (svg: any, oLat: any, oLon: any, demand: any, vehicles: any, 
     }
 
     if (vehicles) {
-        drawRoutes(svg, demand, vehicles, stops);
+        drawRoutes(svg, oLat, oLon, demand, vehicles, stops);
     }
 }
 
