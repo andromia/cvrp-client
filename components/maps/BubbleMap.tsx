@@ -7,7 +7,7 @@
  */
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
-import * as utils from "./Utils";
+import * as utils from "./MapUtils";
 import { useUsaJson } from "./MapJson";
 import * as GeoTypes from "../types/geo";
 
