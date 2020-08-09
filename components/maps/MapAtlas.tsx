@@ -1,18 +1,17 @@
-import React, { useEffect } from "react";
-
 import { geoPath } from "d3";
 
 
 const MapAtlas = (props) => {
-    const path = geoPath(props.projection);
-
-    if (!props.atlasJson) {
-        return <pre>Loading...</pre>;
-    }
+    const atlasPath = geoPath(props.projection);
 
     return (
         <g className="atlas">
-            {props.atlasJson.features.map(feature => (<path className="atlas" d={path(feature)} />))}
+            {props.atlasJson.features.map(feature => (
+                <path 
+                className="atlas-path" 
+                fill="#b8b8b8" 
+                d={atlasPath(feature)} />
+            ))}
         </g>
     );
 }

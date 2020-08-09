@@ -3,7 +3,7 @@ import { json } from 'd3';
 
 const jsonUrl = 'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson';
 
-export const useUsaJson = () => {
+const WorldAtlasJson = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -12,3 +12,5 @@ export const useUsaJson = () => {
 
   return data;
 };
+
+export default WorldAtlasJson;

@@ -3,13 +3,18 @@ import MapLine from "./MapLine";
 import MapCircle from "./MapCircle";
 
 import { geoMercator } from "d3";
-import { useUsaJson } from "./MapJson";
+
+import WorldAtlasJson from "./MapJson";
 
 
 const projection = geoMercator();
 
 const VrpBubbleMap = (props) => {
-    const atlasJson = useUsaJson();
+    const atlasJson = WorldAtlasJson();
+    
+    if (!atlasJson) {
+        return <pre>Loading...</pre>;
+    }
 
     return (
         <g className="vrp-bubble-map">

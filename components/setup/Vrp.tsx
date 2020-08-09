@@ -8,7 +8,6 @@ import React, { useState, useRef } from "react";
 import Papa from "papaparse";
 import * as GeoTypes from "../types/geo";
 import VrpBubbleMap from "../maps/VrpBubbleMap";
-import { useUsaJson } from "../maps/MapJson";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
@@ -22,6 +21,8 @@ import Button from "react-bootstrap/Button";
 
 const axios = require('axios');
 const defaultMarkers = [{"latitude": -999., "longitude": -999.}];
+const svgHeight = 300;
+const svgWidth = "100%";
 
 const checkFileData = (data: Object) => {
     /** 
@@ -331,11 +332,13 @@ const VrpSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <VrpBubbleMap 
-                            originLat={originLat} 
-                            originLon={originLon} 
-                            demand={demand}
-                            routes={routes} />
+                            <svg height={svgHeight} width={svgWidth}>
+                                <VrpBubbleMap 
+                                originLat={originLat} 
+                                originLon={originLon} 
+                                demand={demand}
+                                routes={routes} />
+                            </svg>
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">

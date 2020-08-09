@@ -8,7 +8,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3"; // TODO: optimize d3
 import * as utils from "./MapUtils";
-import { useUsaJson } from "./MapJson";
+import WorldAtlasJson from "./MapJson";
 import * as GeoTypes from "../types/geo";
 
 
@@ -216,7 +216,7 @@ const VrpBubbleMap = (props) => {
      * Map component function exported to parent.
      */
     const svgRef = useRef(null),
-          usaJson = useUsaJson(),
+          usaJson = WorldAtlasJson(),
           [originLat, setOriginLat] = useState(999.),
           [originLon, setOriginLon] = useState(999.),
           [demand, setDemand] = useState(Object),
