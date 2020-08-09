@@ -1,26 +1,32 @@
+import { useState } from "react";
+
 import MapAtlas from "./MapAtlas";
 import MapLine from "./MapLine";
 import MapCircle from "./MapCircle";
 
 import { geoMercator } from "d3";
 
-import WorldAtlasJson from "./MapJson";
 
-
-const projection = geoMercator();
+// TODO: init to center world with no inputs
+// then zoom to plotted origin using 500-600 scale
+const projection = geoMercator()
+    .center([0., 0.])
+    .scale(100);
+    // TODO: .translate([ w/2, h/2 ]); and use responsive parent profile 
 
 const VrpBubbleMap = (props) => {
-    const atlasJson = WorldAtlasJson();
     
-    if (!atlasJson) {
+    if (!props.atlasJson) {
         return <pre>Loading...</pre>;
     }
 
     return (
         <g className="vrp-bubble-map">
             <MapAtlas 
-            atlasJson={atlasJson} 
-            projection={projection} />
+            atlasJson={props.atlasJson} 
+            projection={projection} // TODO: lift state?
+            originLat={props.originLat}
+            originLon={props.originLon} />
             {props.routes.map(r => (
                 <MapLine 
                 stops={r.stops} 

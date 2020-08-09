@@ -8,6 +8,7 @@ import React, { useState, useRef } from "react";
 import Papa from "papaparse";
 import * as GeoTypes from "../types/geo";
 import VrpBubbleMap from "../maps/VrpBubbleMap";
+import WorldAtlasJson from "../maps/MapJson";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
@@ -64,11 +65,13 @@ const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<n
     let routed = {};
 
     for (var i = 0; i < demand.length; i++) {
+        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
+
         if (routed.hasOwnProperty(vehicles[i])) {
-            routed[vehicles[i]].stops.push([demand[i].longitude, demand[i].latitude])
+            routed[vehicles[i]].stops.push(coordinates);
         } else {
             routed[vehicles[i]] = {
-                stops: [[oLon, oLat], [demand[i].longitude, demand[i].latitude]]
+                stops: [[oLon, oLat], coordinates]
             }
         }
     }
@@ -79,8 +82,8 @@ const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<n
 
     for (var i = 0; i < keys.length; i++) {
         let route = routed[keys[i]];
-        route.stops.push([oLon, oLat]);
-        routes[i] = {stops: route};
+        const allStops = route.stops.concat([[oLon, oLat]]);
+        routes[i] = {stops: allStops};
     }
 
     return routes;
@@ -105,14 +108,15 @@ const VrpSetup = () => {
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
           [demand, setDemand] = useState(defaultMarkers),
-          [routes, setRoutes] = useState([{stops: []}]),
-          [csvUrl, setCsvUrl] = useState("");
+          [routes, setRoutes] = useState([]),
+          [csvUrl, setCsvUrl] = useState(""),
+          atlasJson = WorldAtlasJson(); // TODO: manage state;
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
           lonRef = useRef<HTMLInputElement>(null);
 
-    const onGeoInputUpdate = event => {
+    const onOriginInputUpdate = event => {
         /**
          * Event handler for origin inputs.
          * 
@@ -238,7 +242,7 @@ const VrpSetup = () => {
                 demand: demand
             }).then(function (response) {
                 console.log(response);
-                const routes = createRoutes(originLat, originLon, response.data.demand, response.data.vehicle_id, response.data.stop_num);
+                const routes = createRoutes(originLat, originLon, demand, response.data.vehicle_id, response.data.stop_num);
                 setRoutes(routes);
 
                 if (response.data.vehicle_id.length == 0 || response.data.stop_num.length == 0) {
@@ -283,7 +287,7 @@ const VrpSetup = () => {
                                             className="d-inline-flex" 
                                             placeholder="lat." 
                                             aria-label="Lat." 
-                                            onChange={onGeoInputUpdate} 
+                                            onChange={onOriginInputUpdate} 
                                             autoComplete="off" />
                                         </Col>
                                         <Col>
@@ -293,7 +297,7 @@ const VrpSetup = () => {
                                             className="d-inline-flex" 
                                             placeholder="lon." 
                                             aria-label="Lon." 
-                                            onChange={onGeoInputUpdate} 
+                                            onChange={onOriginInputUpdate} 
                                             autoComplete="off"/>
                                         </Col>
                                     </Row>
@@ -334,6 +338,7 @@ const VrpSetup = () => {
                         <Col className="p-0">
                             <svg height={svgHeight} width={svgWidth}>
                                 <VrpBubbleMap 
+                                atlasJson={atlasJson}
                                 originLat={originLat} 
                                 originLon={originLon} 
                                 demand={demand}

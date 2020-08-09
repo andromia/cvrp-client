@@ -3,7 +3,7 @@ import { geoPath } from "d3";
 
 const MapAtlas = (props) => {
     const atlasPath = geoPath(props.projection);
-
+        
     return (
         <g className="atlas">
             {props.atlasJson.features.map(feature => (
