@@ -1,4 +1,4 @@
-export const MapCircle = (props) => {
+const MapCircle = (props) => {
     const cx = props.projection([props.lon, props.lat])[0];
     const cy = props.projection([props.lon, props.lat])[1];
 
@@ -10,3 +10,5 @@ export const MapCircle = (props) => {
         r={props.size} />
     );
 }
+
+export default MapCircle;

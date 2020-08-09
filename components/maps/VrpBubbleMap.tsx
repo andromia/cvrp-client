@@ -1,34 +1,42 @@
-import { MapAtlas } from "./MapAtlas";
-import { MapLine } from "./MapLine";
-import { MapCircle } from "./MapCircle";
+import MapAtlas from "./MapAtlas";
+import MapLine from "./MapLine";
+import MapCircle from "./MapCircle";
+
+import { geoMercator } from "d3";
+import { useUsaJson } from "./MapJson";
 
 
-export const VrpBubbleMap = (props) => {
+const projection = geoMercator();
+
+const VrpBubbleMap = (props) => {
+    const atlasJson = useUsaJson();
 
     return (
         <g className="vrp-bubble-map">
             <MapAtlas 
-            worldAtlas={props.worldAtlas} 
-            projection={props.projection} />
-            {props.data.routes.map(r => (
+            atlasJson={atlasJson} 
+            projection={projection} />
+            {props.routes.map(r => (
                 <MapLine 
                 stops={r.stops} 
-                projection={props.projection} />
+                projection={projection} />
             ))}
-            {props.data.demand.map(d => (
+            {props.demand.map(d => (
                 <MapCircle 
                 name={"demand"} 
                 lat={d.latitude} 
                 lon={d.longitude} 
                 size={3}
-                projection={props.projection} />
+                projection={projection} />
             ))}
             <MapCircle 
             name={"origin"} 
-            lat={props.data.originLat} 
-            lon={props.data.originLon} 
+            lat={props.originLat} 
+            lon={props.originLon} 
             size={6}
-            projection={props.projection} />
+            projection={projection} />
         </g>
     );
 }
+
+export default VrpBubbleMap;
