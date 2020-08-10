@@ -6,9 +6,9 @@
  */
 import React, { useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
-import * as GeoTypes from "../types/geo";
 import VrpBubbleMap from "../maps/VrpBubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
+import * as mapUtils from "../maps/MapUtils";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
@@ -16,9 +16,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import * as mapUtils from "../maps/MapUtils";
 import Button from "react-bootstrap/Button";
-import { isNull } from "util";
 
 
 const axios = require('axios');
@@ -94,15 +92,10 @@ const VrpSetup = () => {
      * 
      * Requires users to input origin, vehicle constraints,
      * and demand in the form of a csv file.
-     * 
-     * TODO: 
-     *   - refactor for component-based modules.
-     *   - refactor for component-agnostic forms.
      */
-
-     
     const svgContainerRef = useRef<HTMLDivElement>(null),
-          [svgHeight, setSvgHeight] = useState<any>(350),
+          svgHeight = 350,
+          atlasJson = WorldAtlasJson(),
           [svgWidth, setSvgWidth] = useState<any>(null),
           [originLat, setOriginLat] = useState(-999.),
           [originLon, setOriginLon] = useState(-999.),
@@ -111,8 +104,7 @@ const VrpSetup = () => {
           [fileName, setFileName] = useState("demand file"),
           [demand, setDemand] = useState(defaultMarkers),
           [routes, setRoutes] = useState(Array(0)),
-          [csvUrl, setCsvUrl] = useState(""),
-          atlasJson = WorldAtlasJson(); // TODO: manage state;
+          [csvUrl, setCsvUrl] = useState("");
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
@@ -368,13 +360,6 @@ const VrpSetup = () => {
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
-                        <style type="text/css">
-                        {`
-                            .download-btn {
-                                background-color: #4CAF50;
-                            }
-                        `}
-                        </style>
                         {routes.length > 0 &&
                             <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                         }

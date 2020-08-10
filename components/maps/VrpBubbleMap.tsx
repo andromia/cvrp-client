@@ -1,16 +1,12 @@
-import { useState, useRef } from "react";
-
 import MapAtlas from "./MapAtlas";
 import MapLine from "./MapLine";
 import MapCircle from "./MapCircle";
 
-import { select, geoMercator } from "d3";
-import { create } from "domain";
+import { geoMercator } from "d3";
 
 
 const VrpBubbleMap = (props) => {
-    const svgRef = useRef(null),
-          projection = geoMercator()
+    const projection = geoMercator()
             .center([0., 0.])
             .scale(100)
             .translate([ props.width / 2, props.height / 2 ]);
@@ -21,7 +17,6 @@ const VrpBubbleMap = (props) => {
     
     return (
         <svg
-        ref={svgRef}
         height={props.height}
         width={props.width}>
             <g className="vrp-bubble-map">
