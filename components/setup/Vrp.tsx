@@ -4,7 +4,7 @@
  * 
  * TODO: improve on *alert*.
  */
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import * as GeoTypes from "../types/geo";
 import VrpBubbleMap from "../maps/VrpBubbleMap";
@@ -18,12 +18,11 @@ import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import * as mapUtils from "../maps/MapUtils";
 import Button from "react-bootstrap/Button";
+import { isNull } from "util";
 
 
 const axios = require('axios');
 const defaultMarkers = [{"latitude": -999., "longitude": -999.}];
-const svgHeight = 300;
-const svgWidth = "100%";
 
 const checkFileData = (data: Object) => {
     /** 
@@ -102,19 +101,32 @@ const VrpSetup = () => {
      */
 
      
-    const [originLat, setOriginLat] = useState(-999.),
+    const svgContainerRef = useRef<HTMLDivElement>(null),
+          [svgHeight, setSvgHeight] = useState<any>(350),
+          [svgWidth, setSvgWidth] = useState<any>(null),
+          [originLat, setOriginLat] = useState(-999.),
           [originLon, setOriginLon] = useState(-999.),
           [vehicleCap, setVehicleCap] = useState(-999.9),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
           [demand, setDemand] = useState(defaultMarkers),
-          [routes, setRoutes] = useState([]),
+          [routes, setRoutes] = useState(Array(0)),
           [csvUrl, setCsvUrl] = useState(""),
           atlasJson = WorldAtlasJson(); // TODO: manage state;
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
           lonRef = useRef<HTMLInputElement>(null);
+
+    const handleSvgWidth = () => {
+        if (!svgContainerRef) {
+            return;
+        }
+        
+        if (svgContainerRef.current) {
+            setSvgWidth(svgContainerRef.current.offsetWidth);
+        }
+    }
 
     const onOriginInputUpdate = event => {
         /**
@@ -268,6 +280,11 @@ const VrpSetup = () => {
             });
     };
 
+    useEffect(() => {
+        window.addEventListener("load", handleSvgWidth);
+        window.addEventListener("resize", handleSvgWidth);
+    }, []);
+
     return (
         <Card>
             <Card.Body>
@@ -336,14 +353,18 @@ const VrpSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <svg height={svgHeight} width={svgWidth}>
-                                <VrpBubbleMap 
-                                atlasJson={atlasJson}
-                                originLat={originLat} 
-                                originLon={originLon} 
-                                demand={demand}
-                                routes={routes} />
-                            </svg>
+                            <div 
+                            className="svg-container"
+                            ref={svgContainerRef}>
+                                    <VrpBubbleMap 
+                                    height={svgHeight}
+                                    width={svgWidth}
+                                    atlasJson={atlasJson}
+                                    originLat={originLat} 
+                                    originLon={originLon} 
+                                    demand={demand}
+                                    routes={routes} />
+                            </div>
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
