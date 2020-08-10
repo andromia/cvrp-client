@@ -1,18 +1,24 @@
 import { geoPath } from "d3";
 
 
+const lineClassName: string = "line";
+const lineFill: string = "none";
+const lineStroke: string = "#0000ff";
+const lineStrokeWidth: number = 2;
+const lineOpacity: number = .6;
+
 const MapLine = (props) => {
     const path = geoPath().projection(props.projection);
     const lineStrings = {type: "LineString", coordinates: props.stops};
 
     return (
         <path 
-        className="line" 
+        className={lineClassName}
         d={path(lineStrings)}
-        fill={"none"}
-        stroke={"#0000ff"}
-        stroke-width={"2px"}
-        opacity={.6} />
+        fill={lineFill}
+        stroke={lineStroke}
+        stroke-width={lineStrokeWidth}
+        opacity={lineOpacity} />
     );
 }
 

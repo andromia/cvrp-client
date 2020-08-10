@@ -2,11 +2,17 @@
  * Initial versions of this file will be limited strictly to
  * VRP-tidy uploads and routing outputs.
  * 
- * TODO: improve on *alert*.
+ * TODO: 
+ *   - improve on *alert*
+ *   - leverage TS typing
+ *   - fix <a><Button/></a> for download href with just Button
  */
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
-import * as GeoTypes from "../types/geo";
+import VrpBubbleMap from "../maps/VrpBubbleMap";
+import WorldAtlasJson from "../maps/MapJson";
+import * as mapUtils from "../maps/MapUtils";
+import * as setupUtils from "./SetupUtils";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
@@ -14,42 +20,50 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
-import VrpBubbleMap from "../maps/BubbleMap";
-import * as mapUtils from "../maps/MapUtils";
 import Button from "react-bootstrap/Button";
 
 
 const axios = require('axios');
-const defaultMarkers = [{"latitude": -999., "longitude": -999.}];
 
-const checkFileData = (data: Object) => {
-    /** 
-     * Form utility check for geocodes.
+interface CoordinateMarker {
+    latitude: number;
+    longitude: number;
+}
+
+const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
+
+const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<number>, stopNums: Array<number>) => {
+    /**
+     * Create list of objects {stops: [[oLon, oLat] ...]} where
+     * origin is the first and last stop.
      * 
-     * TODO: add unit data check.
+     * TODO: use stops for order.
      */
-    if (!data[0].hasOwnProperty("latitude") || !data[0].hasOwnProperty("longitude")) {
-        alert("latitude and longitude fields are required in the damand file!");
-    }
-}
+    let routed = {};
 
-const checkNum = (val: any) => {
-    /**
-     * Form utility check for numeric values.
-     */
-    if (!isFinite(val)) {
-        alert("value is not a number!");
-    }
-}
+    for (var i = 0; i < demand.length; i++) {
+        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
 
-const checkUnit = (unit: String, data: any) => {
-    /**
-     * Form utitlity check for validating that the 
-     * *unit* field exists in the data provided.
-     */
-    if (!data[0].hasOwnProperty(unit)) {
-        alert("unit entered cannot be found in the demand file!");
+        if (routed.hasOwnProperty(vehicles[i])) {
+            routed[vehicles[i]].stops.push(coordinates);
+        } else {
+            routed[vehicles[i]] = {
+                stops: [[oLon, oLat], coordinates]
+            }
+        }
     }
+
+    // convert routes to list of objects
+    const keys = Object.keys(routed);
+    let routes = Array(keys.length);
+
+    for (var i = 0; i < keys.length; i++) {
+        let route = routed[keys[i]];
+        const allStops = route.stops.concat([[oLon, oLat]]);
+        routes[i] = {stops: allStops};
+    }
+
+    return routes;
 }
 
 const VrpSetup = () => {
@@ -58,26 +72,39 @@ const VrpSetup = () => {
      * 
      * Requires users to input origin, vehicle constraints,
      * and demand in the form of a csv file.
-     * 
-     * TODO: 
-     *   - refactor for component-based modules.
-     *   - refactor for component-agnostic forms.
      */
-    const [originLat, setOriginLat] = useState(-999.),
-          [originLon, setOriginLon] = useState(-999.),
-          [vehicleCap, setVehicleCap] = useState(-999.9),
-          [vehicleUnit, setVehicleUnit] = useState(""),
+    const svgContainerRef = useRef<HTMLDivElement>(null),
+          svgHeight: number = 350,
+          atlasJson = WorldAtlasJson(),
+          [svgWidth, setSvgWidth] = useState<any>(null),
+          [originLat, setOriginLat] = useState<number>(0.),
+          [originLon, setOriginLon] = useState<number>(0.),
+          [vehicleCap, setVehicleCap] = useState<number>(0),
+          [vehicleUnit, setVehicleUnit] = useState<string>(""),
           [fileName, setFileName] = useState("demand file"),
-          [demand, setDemand] = useState(defaultMarkers),
-          [vehicles, setVehicles] = useState(Array),
-          [stops, setStops] = useState(Array),
-          [csvUrl, setCsvUrl] = useState("");
+          [demand, setDemand] = useState<Array<CoordinateMarker>>(defaultMarkers),
+          [routes, setRoutes] = useState<Array<number>>(Array(0)),
+          [csvUrl, setCsvUrl] = useState<string>("");
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
           lonRef = useRef<HTMLInputElement>(null);
 
-    const onGeoInputUpdate = event => {
+    const handleSvgWidth = () => {
+        /**
+         * Get current width of div containing rendered SVG and 
+         * set svg width state.
+         */
+        if (!svgContainerRef) {
+            return;
+        }
+        
+        if (svgContainerRef.current) {
+            setSvgWidth(svgContainerRef.current.offsetWidth);
+        }
+    }
+
+    const onOriginInputUpdate = event => {
         /**
          * Event handler for origin inputs.
          * 
@@ -93,8 +120,8 @@ const VrpSetup = () => {
         const latInput = Number(latRef.current?.value);
         const lonInput = Number(lonRef.current?.value);
 
-        checkNum(latInput);
-        checkNum(lonInput);
+        setupUtils.checkNum(latInput);
+        setupUtils.checkNum(lonInput);
 
         setOriginLat(latInput);
         setOriginLon(lonInput);
@@ -114,7 +141,7 @@ const VrpSetup = () => {
         Papa.parse(event.target.files[0], {
             header: true,
             complete: function(results) {
-                checkFileData(results.data);
+                setupUtils.checkFileData(results.data);
 
                 setDemand(results.data);
             }
@@ -131,7 +158,7 @@ const VrpSetup = () => {
          * logic to the optimization service.
          */
         const cap = Number(event.target.value);
-        checkNum(cap);
+        setupUtils.checkNum(cap);
 
         setVehicleCap(cap);
     }
@@ -179,7 +206,7 @@ const VrpSetup = () => {
         }
         
         if (demand != defaultMarkers) {
-            checkUnit(vehicleUnit, demand);
+            setupUtils.checkUnit(vehicleUnit, demand);
 
         } else {
             alert("demand file is invalid!");
@@ -193,7 +220,7 @@ const VrpSetup = () => {
 
         // TODO: create asynchronous call
         axios.post(
-            process.env.dev.VRP_RPC_URL,
+            process.env.dev.VRP_SERVICE_URL,
             {   
                 origin_latitude: originLat,
                 origin_longitude: originLon,
@@ -203,8 +230,8 @@ const VrpSetup = () => {
                 demand: demand
             }).then(function (response) {
                 console.log(response);
-                setVehicles(response.data.vehicle_id);
-                setStops(response.data.stop_num);
+                const routes = createRoutes(originLat, originLon, demand, response.data.vehicle_id, response.data.stop_num);
+                setRoutes(routes);
 
                 if (response.data.vehicle_id.length == 0 || response.data.stop_num.length == 0) {
                     return;
@@ -229,6 +256,11 @@ const VrpSetup = () => {
             });
     };
 
+    useEffect(() => {
+        window.addEventListener("load", handleSvgWidth);
+        window.addEventListener("resize", handleSvgWidth);
+    }, []);
+
     return (
         <Card>
             <Card.Body>
@@ -248,7 +280,7 @@ const VrpSetup = () => {
                                             className="d-inline-flex" 
                                             placeholder="lat." 
                                             aria-label="Lat." 
-                                            onChange={onGeoInputUpdate} 
+                                            onChange={onOriginInputUpdate} 
                                             autoComplete="off" />
                                         </Col>
                                         <Col>
@@ -258,7 +290,7 @@ const VrpSetup = () => {
                                             className="d-inline-flex" 
                                             placeholder="lon." 
                                             aria-label="Lon." 
-                                            onChange={onGeoInputUpdate} 
+                                            onChange={onOriginInputUpdate} 
                                             autoComplete="off"/>
                                         </Col>
                                     </Row>
@@ -297,25 +329,22 @@ const VrpSetup = () => {
                     </Row>
                     <Row className="mb-4">
                         <Col className="p-0">
-                            <VrpBubbleMap 
-                            originLat={originLat} 
-                            originLon={originLon} 
-                            demand={demand}
-                            vehicles={vehicles}
-                            stops={stops}
-                            width={"100%"} 
-                            height={375} />
+                            <div 
+                            className="svg-container"
+                            ref={svgContainerRef}>
+                                    <VrpBubbleMap 
+                                    height={svgHeight}
+                                    width={svgWidth}
+                                    atlasJson={atlasJson}
+                                    originLat={originLat} 
+                                    originLon={originLon} 
+                                    demand={demand}
+                                    routes={routes} />
+                            </div>
                         </Col>
                     </Row>
                     <Row className="d-flex justify-content-end">
-                        <style type="text/css">
-                        {`
-                            .download-btn {
-                                background-color: #4CAF50;
-                            }
-                        `}
-                        </style>
-                        {vehicles.length > 0 &&
+                        {routes.length > 0 &&
                             <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                         }
                         <Col lg="8">

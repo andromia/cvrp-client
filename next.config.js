@@ -8,7 +8,7 @@ module.exports = {
         dev: {
             USER_AUTH_URL: "http://localhost:8080/",
             USER_CRUD_URL: "http://localhost:8081/",
-            VRP_RPC_URL: "http://localhost:5000/api/v0.1/vrp"
+            VRP_SERVICE_URL: "http://localhost:5000/api/v0.1/vrp"
         },
         prod: {
             USER_AUTH_URL: "http://localhost:8080/",

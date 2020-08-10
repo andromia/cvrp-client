@@ -1,26 +1,21 @@
 import MapAtlas from "./MapAtlas";
 import MapLine from "./MapLine";
 import MapCircle from "./MapCircle";
-
+import { isNullIsland } from "./MapUtils";
 import { geoMercator } from "d3";
 
 
-const demandCircleSize = 3;
-const originCircleSize = 6;
-
-const isNullIsland = (lat: number, lon: number) => {
-    if (lat == 0. && lon == 0.) {
-        return true;
-    }
-
-    return false;
-}
+const groupClassName: string = "vrp-bubble-map";
+const demandCircleSize: number = 3;
+const demandCircleClassName: string = "demand";
+const originCircleSize: number = 6;
+const originCircleClassName: string = "origin";
 
 const VrpBubbleMap = (props) => {
     const projection = geoMercator()
-            .center([props.originLon, props.originLat])
-            .scale(isNullIsland(props.originLat, props.originLon) ? 100 : 600)
-            .translate([ props.width / 2, props.height / 2 ]);
+        .center([props.originLon, props.originLat])
+        .scale(isNullIsland(props.originLat, props.originLon) ? 100 : 600)
+        .translate([ props.width / 2, props.height / 2 ]);
     
     if (!props.atlasJson) {
         return <pre>Loading...</pre>;
@@ -30,7 +25,7 @@ const VrpBubbleMap = (props) => {
         <svg
         height={props.height}
         width={props.width}>
-            <g className="vrp-bubble-map">
+            <g className={groupClassName}>
                 <MapAtlas 
                 atlasJson={props.atlasJson} 
                 projection={projection} // TODO: lift state?
@@ -43,7 +38,7 @@ const VrpBubbleMap = (props) => {
                 ))}
                 {props.demand.map(d => (
                     <MapCircle 
-                    name={"demand"} 
+                    name={demandCircleClassName} 
                     lat={d.latitude} 
                     lon={d.longitude} 
                     projection={projection}
@@ -51,7 +46,7 @@ const VrpBubbleMap = (props) => {
                 ))}
                 {!isNullIsland(props.originLat, props.originLon) &&
                     <MapCircle 
-                    name={"origin"} 
+                    name={originCircleClassName} 
                     lat={props.originLat} 
                     lon={props.originLon} 
                     projection={projection}

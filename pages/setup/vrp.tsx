@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 
 import Search from "../../components/setup/Search";
-import VrpSetup from "../../components/setup/Vrp";
+import VrpSetup from "../../components/setup/VrpSetup";
 
 
 const VRP = () => {
