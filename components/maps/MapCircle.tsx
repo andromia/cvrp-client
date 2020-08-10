@@ -4,10 +4,15 @@ const MapCircle = (props) => {
 
     return (
         <circle 
-        className={props.name} 
+        className={props.name}
         cx={cx} 
         cy={cy} 
-        r={props.size} />
+        r={props.size}
+        stroke={"#69b3a2"}
+        stroke-width={props.size/4}
+        fill-opacity={.4}>
+            <title>{"lat: " + props.lat + " lon: " + props.lon}</title>
+        </circle>
     );
 }
 

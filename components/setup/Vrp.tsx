@@ -20,7 +20,7 @@ import Button from "react-bootstrap/Button";
 
 
 const axios = require('axios');
-const defaultMarkers = [{"latitude": -999., "longitude": -999.}];
+const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
 
 const checkFileData = (data: Object) => {
     /** 
@@ -97,9 +97,9 @@ const VrpSetup = () => {
           svgHeight = 350,
           atlasJson = WorldAtlasJson(),
           [svgWidth, setSvgWidth] = useState<any>(null),
-          [originLat, setOriginLat] = useState(-999.),
-          [originLon, setOriginLon] = useState(-999.),
-          [vehicleCap, setVehicleCap] = useState(-999.9),
+          [originLat, setOriginLat] = useState(0.),
+          [originLon, setOriginLon] = useState(0.),
+          [vehicleCap, setVehicleCap] = useState(0),
           [vehicleUnit, setVehicleUnit] = useState(""),
           [fileName, setFileName] = useState("demand file"),
           [demand, setDemand] = useState(defaultMarkers),

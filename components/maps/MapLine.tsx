@@ -6,7 +6,13 @@ const MapLine = (props) => {
     const lineStrings = {type: "LineString", coordinates: props.stops};
 
     return (
-        <path className="line" d={path(lineStrings)} />
+        <path 
+        className="line" 
+        d={path(lineStrings)}
+        fill={"none"}
+        stroke={"#0000ff"}
+        stroke-width={"2px"}
+        opacity={.6} />
     );
 }
 

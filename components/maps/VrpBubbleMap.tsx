@@ -5,10 +5,21 @@ import MapCircle from "./MapCircle";
 import { geoMercator } from "d3";
 
 
+const demandCircleSize = 3;
+const originCircleSize = 6;
+
+const isNullIsland = (lat: number, lon: number) => {
+    if (lat == 0. && lon == 0.) {
+        return true;
+    }
+
+    return false;
+}
+
 const VrpBubbleMap = (props) => {
     const projection = geoMercator()
-            .center([0., 0.])
-            .scale(100)
+            .center([props.originLon, props.originLat])
+            .scale(isNullIsland(props.originLat, props.originLon) ? 100 : 600)
             .translate([ props.width / 2, props.height / 2 ]);
     
     if (!props.atlasJson) {
@@ -35,15 +46,17 @@ const VrpBubbleMap = (props) => {
                     name={"demand"} 
                     lat={d.latitude} 
                     lon={d.longitude} 
-                    size={3}
-                    projection={projection} />
+                    projection={projection}
+                    size={demandCircleSize} />
                 ))}
-                <MapCircle 
-                name={"origin"} 
-                lat={props.originLat} 
-                lon={props.originLon} 
-                size={6}
-                projection={projection} />
+                {!isNullIsland(props.originLat, props.originLon) &&
+                    <MapCircle 
+                    name={"origin"} 
+                    lat={props.originLat} 
+                    lon={props.originLon} 
+                    projection={projection}
+                    size={originCircleSize} />
+                }
             </g>
         </svg>
     );
