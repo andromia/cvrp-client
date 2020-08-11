@@ -222,16 +222,16 @@ const VrpSetup = () => {
                 vehicle_capacity: vehicleCap,
                 vehicle_definitions: [], // TODO: remove this for MVP
                 unit: vehicleUnit,
-                demands: demand
+                demand: demand
             }).then(function (response) {
                 console.log(response);
 
-                const parsedVehicles: Array<number> = Array<number>(response.data.solutions.length);
-                const parsedStops: Array<number> = Array<number>(response.data.solutions.length);
+                const parsedVehicles: Array<number> = Array<number>(response.data.solution.length);
+                const parsedStops: Array<number> = Array<number>(response.data.solution.length);
                 
-                for (var i = 0; i < response.data.solutions.length; i++) {
-                    parsedVehicles[i] = response.data.solutions[i].vehicle_id;
-                    parsedStops[i] = response.data.solutions[i].stop_id;
+                for (var i = 0; i < response.data.solution.length; i++) {
+                    parsedVehicles[i] = response.data.solution[i].vehicle_id;
+                    parsedStops[i] = response.data.solution[i].stop_id;
                 }
 
                 const routes = setupUtils.createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
