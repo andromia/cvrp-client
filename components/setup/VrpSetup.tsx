@@ -222,18 +222,29 @@ const VrpSetup = () => {
         axios.post(
             process.env.dev.VRP_SERVICE_URL,
             {   
-                origin_latitude: originLat,
-                origin_longitude: originLon,
-                vehicle_max_capacity_quantity: vehicleCap,
+                origin: {
+                    "latitude": originLat,
+                    "longitude": originLon
+                },
+                vehicle_capacity: vehicleCap,
                 vehicle_definitions: [], // TODO: remove this for MVP
                 unit: vehicleUnit,
-                demand: demand
+                demands: demand
             }).then(function (response) {
                 console.log(response);
-                const routes = createRoutes(originLat, originLon, demand, response.data.vehicle_id, response.data.stop_num);
+
+                const parsedVehicles: Array<number> = Array<number>(response.data.solutions.length);
+                const parsedStops: Array<number> = Array<number>(response.data.solutions.length);
+                
+                for (var i = 0; i < response.data.solutions.length; i++) {
+                    parsedVehicles[i] = response.data.solutions[i].vehicle_id;
+                    parsedStops[i] = response.data.solutions[i].stop_id;
+                }
+
+                const routes = createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
                 setRoutes(routes);
 
-                if (response.data.vehicle_id.length == 0 || response.data.stop_num.length == 0) {
+                if (parsedVehicles.length == 0 || parsedStops.length == 0) {
                     return;
                 }
         
@@ -241,8 +252,8 @@ const VrpSetup = () => {
                 demand.forEach(val => data.push(Object.assign({}, val)));
         
                 for (var i = 0; i < demand.length; i++) {
-                    data[i]["vehicle_id"] = response.data.vehicle_id[i];
-                    data[i]["stop_num"] = response.data.stop_num[i];
+                    data[i]["vehicle_id"] = parsedVehicles[i];
+                    data[i]["stop_num"] = parsedStops[i];
                 }
         
                 const csv = Papa.unparse(data);
