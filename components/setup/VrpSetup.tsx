@@ -22,48 +22,14 @@ import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-
 const axios = require('axios');
+
+
+const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
 
 interface CoordinateMarker {
     latitude: number;
     longitude: number;
-}
-
-const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
-
-const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<number>, stopNums: Array<number>) => {
-    /**
-     * Create list of objects {stops: [[oLon, oLat] ...]} where
-     * origin is the first and last stop.
-     * 
-     * TODO: use stops for order.
-     */
-    let routed = {};
-
-    for (var i = 0; i < demand.length; i++) {
-        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
-
-        if (routed.hasOwnProperty(vehicles[i])) {
-            routed[vehicles[i]].stops.push(coordinates);
-        } else {
-            routed[vehicles[i]] = {
-                stops: [[oLon, oLat], coordinates]
-            }
-        }
-    }
-
-    // convert routes to list of objects
-    const keys = Object.keys(routed);
-    let routes = Array(keys.length);
-
-    for (var i = 0; i < keys.length; i++) {
-        let route = routed[keys[i]];
-        const allStops = route.stops.concat([[oLon, oLat]]);
-        routes[i] = {stops: allStops};
-    }
-
-    return routes;
 }
 
 const VrpSetup = () => {
@@ -157,9 +123,13 @@ const VrpSetup = () => {
          * TODO: push integer processing/requirement
          * logic to the optimization service.
          */
-        const cap = Number(event.target.value);
-        setupUtils.checkNum(cap);
 
+        if (!Number.isInteger(parseInt(event.target.value))) {
+            setVehicleCap(0);
+            return;
+        }
+
+        const cap = Number(event.target.value);
         setVehicleCap(cap);
     }
 
@@ -181,6 +151,29 @@ const VrpSetup = () => {
         setVehicleUnit(unit);
     }
 
+    const prepareDownload = (parsedVehicles: Array<number>, parsedStops: Array<number>) => {
+        /**
+         * Create client-side prepared csv download by href.
+         */
+        if (parsedVehicles.length == 0 || parsedStops.length == 0) {
+            return;
+        }
+
+        const data: object[] = []; 
+        demand.forEach(val => data.push(Object.assign({}, val)));
+
+        for (var i = 0; i < demand.length; i++) {
+            data[i]["vehicle_id"] = parsedVehicles[i];
+            data[i]["stop_num"] = parsedStops[i];
+        }
+
+        const csv = Papa.unparse(data);
+        const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+        const csvUrl = window.URL.createObjectURL(csvData);
+    
+        setCsvUrl(csvUrl);
+    }
+
     const onCreateSubmit = event => {
         /**
          * Event handler for setup create button. 
@@ -199,7 +192,7 @@ const VrpSetup = () => {
             return;
         }
 
-        if (!Number.isInteger(vehicleCap)) {
+        if (!Number.isInteger(vehicleCap) || vehicleCap <= 0) {
             alert("vehicle capacity is invalid!");
 
             return;
@@ -241,26 +234,10 @@ const VrpSetup = () => {
                     parsedStops[i] = response.data.solutions[i].stop_id;
                 }
 
-                const routes = createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
-                setRoutes(routes);
+                const routes = setupUtils.createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
 
-                if (parsedVehicles.length == 0 || parsedStops.length == 0) {
-                    return;
-                }
-        
-                const data: object[] = []; 
-                demand.forEach(val => data.push(Object.assign({}, val)));
-        
-                for (var i = 0; i < demand.length; i++) {
-                    data[i]["vehicle_id"] = parsedVehicles[i];
-                    data[i]["stop_num"] = parsedStops[i];
-                }
-        
-                const csv = Papa.unparse(data);
-                const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-                const csvUrl = window.URL.createObjectURL(csvData);
-            
-                setCsvUrl(csvUrl);
+                setRoutes(routes);
+                prepareDownload(parsedVehicles, parsedStops);
             }).catch(function (error) {
                 console.log(error);
                 return error;
