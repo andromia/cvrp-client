@@ -19,7 +19,7 @@ const axios = require('axios');
 
 const svgHeight: number = 350;
 
-const VrpSetup = () => {
+const GeocodeSetup = () => {
     /**
      * Setup page for geocode module. 
      * 
@@ -119,4 +119,4 @@ const VrpSetup = () => {
     );
 };
 
-export default VrpSetup;
+export default GeocodeSetup;
