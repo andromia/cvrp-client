@@ -17,7 +17,7 @@ const MapLine = (props) => {
         d={path(lineStrings)}
         fill={lineFill}
         stroke={lineStroke}
-        stroke-width={lineStrokeWidth}
+        strokeWidth={lineStrokeWidth}
         opacity={lineOpacity} />
     );
 }

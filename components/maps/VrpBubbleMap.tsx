@@ -28,9 +28,7 @@ const VrpBubbleMap = (props) => {
             <g className={groupClassName}>
                 <MapAtlas 
                 atlasJson={props.atlasJson} 
-                projection={projection} // TODO: lift state?
-                originLat={props.originLat}
-                originLon={props.originLon} />
+                projection={projection} />
                 {props.routes.map(r => (
                     <MapLine 
                     stops={r.stops} 

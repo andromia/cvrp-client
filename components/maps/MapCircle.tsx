@@ -12,8 +12,8 @@ const MapCircle = (props) => {
         cy={cy} 
         r={props.size}
         stroke={circleStrokeColor}
-        stroke-width={props.size/4}
-        fill-opacity={cicleOpacity}>
+        strokeWidth={props.size/4}
+        fillOpacity={cicleOpacity}>
             <title>{"lat: " + props.lat + " lon: " + props.lon}</title>
         </circle>
     );

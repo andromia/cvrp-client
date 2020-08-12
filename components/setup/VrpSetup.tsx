@@ -13,6 +13,7 @@ import VrpBubbleMap from "../maps/VrpBubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapUtils from "../maps/MapUtils";
 import * as setupUtils from "./SetupUtils";
+import * as mapTypes from "../maps/MapTypes";
 
 // Bootstrap
 import Card from "react-bootstrap/Card";
@@ -26,11 +27,6 @@ const axios = require('axios');
 
 
 const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
-
-interface CoordinateMarker {
-    latitude: number;
-    longitude: number;
-}
 
 const VrpSetup = () => {
     /**
@@ -48,7 +44,7 @@ const VrpSetup = () => {
           [vehicleCap, setVehicleCap] = useState<number>(0),
           [vehicleUnit, setVehicleUnit] = useState<string>(""),
           [fileName, setFileName] = useState("demand file"),
-          [demand, setDemand] = useState<Array<CoordinateMarker>>(defaultMarkers),
+          [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(defaultMarkers),
           [routes, setRoutes] = useState<Array<number>>(Array(0)),
           [csvUrl, setCsvUrl] = useState<string>("");
 
