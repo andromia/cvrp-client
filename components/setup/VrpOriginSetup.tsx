@@ -103,14 +103,12 @@ const VrpOriginSetup = () => {
                             <div 
                             className="svg-container"
                             ref={svgContainerRef}>
-                                {destinations.length > 0 &&
-                                    <BubbleMap 
-                                    height={svgHeight}
-                                    width={svgWidth}
-                                    atlasJson={atlasJson}
-                                    origins={origins}
-                                    destinations={destinations} />
-                                }
+                                <BubbleMap 
+                                height={svgHeight}
+                                width={svgWidth}
+                                atlasJson={atlasJson}
+                                origins={origins}
+                                destinations={destinations} />
                             </div>
                         </Col>
                     </Row>

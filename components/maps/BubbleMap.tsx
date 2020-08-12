@@ -20,7 +20,7 @@ const BubbleMap = (props) => {
     const centerMarker = getAverageGeocodes(props.destinations);
     const projection = geoMercator()
         .center([centerMarker[1], centerMarker[0]])
-        .scale(600)
+        .scale(props.destinations.length == 0 ? 100 : 600)
         .translate([ props.width / 2, props.height / 2 ]);
     
     if (!props.atlasJson) {
