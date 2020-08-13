@@ -75,7 +75,7 @@ const VrpOriginSetup = () => {
                         console.log(response);
                         setOrigins([response.data]);
 
-                        const csv = Papa.unparse(response.data);
+                        const csv = Papa.unparse([response.data]);
                         const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                         const csvUrl = window.URL.createObjectURL(csvData);
             

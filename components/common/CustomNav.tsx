@@ -4,13 +4,14 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
+import Logo from "../images/Logo";
 
 
 const CustomNav = () => {
 
     return (
         <Navbar bg="light" expand="lg">
-            <Navbar.Brand href="/">solverstack</Navbar.Brand>
+            <Navbar.Brand href="/"><Logo height="30px"/> solverstack</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
