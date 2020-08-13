@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 // import { wrapper } from "../components/_store";
 
+
 const theme = {
     colors: {
         primary: "black"

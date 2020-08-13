@@ -4,7 +4,7 @@ import React, { ReactElement } from "react";
 import Image from "react-bootstrap/Image";
 
 const Logo = (): ReactElement => {
-    return <Image src="/logo.png" roundedCircle height="110px" />;
+    return <a href="/"><Image src="/logo.png" roundedCircle height="110px" /></a>;
 };
 
 export default Logo;

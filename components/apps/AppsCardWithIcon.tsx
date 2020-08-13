@@ -8,20 +8,17 @@ import CardIcon from "./CardIcon";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-const AppsCardWithIcon = () => {
+const AppsCardWithIcon = (props) => {
     return (
         <Card>
-            <CardIcon />
+            <CardIcon link={props.link} />
             <Card.Body>
                 <Row className="d-flex justify-content-end">
                     <Col lg="10">
-                        <Card.Title>Card Title</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle>
-                        <Card.Text>
-                            Some quick example text to build on the card title and make up the bulk of the card's content.
-                        </Card.Text>
-                        <Card.Link href="#">Card Link</Card.Link>
-                        <Card.Link href="#">Another Link</Card.Link>
+                        <Card.Title>{props.title}</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">{props.sub}</Card.Subtitle>
+                        <Card.Text>{props.desc}</Card.Text>
+                        <Card.Link href={props.link}>Setup</Card.Link>
                     </Col>
                 </Row>
             </Card.Body>

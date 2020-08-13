@@ -1,27 +1,24 @@
 import React from "react";
 import Head from "next/head";
 
-import CustomBtn from "../components/Button";
+import CustomNav from "../components/common/CustomNav";
+
 
 const Home: React.FunctionComponent = (props: any) => {
     return (
         <div className="container">
             <Head>
-                <title>Create Next App</title>
+                <title>solverstack</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
+            <CustomNav />
+
             <main>
                 <div>
-                    <h1>Main content</h1>
-                    <CustomBtn type="auth" />
-                    <CustomBtn type="crud" />
+                    <h1>Welcome!</h1>
                 </div>
             </main>
-
-            <footer>
-                <div>Wow, a footer component</div>
-            </footer>
         </div>
     );
 };

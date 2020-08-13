@@ -10,10 +10,10 @@ const CustomContainer = styled.div`
     top: -30px;
 `;
 
-const CardIcon = () => {
+const CardIcon = (props) => {
     return (
         <CustomContainer>
-            <AppIcon />
+            <AppIcon link={props.link} />
         </CustomContainer>
     );
 };

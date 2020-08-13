@@ -25,7 +25,7 @@ const Type = (): ReactElement => {
                             <Logo />
                         </Col>
                         <Col>
-                            <h3 className="mb-0">solverstack.com</h3>
+                            <h3 className="mb-0">solverstack</h3>
                         </Col>
                     </Row>
                 </Col>

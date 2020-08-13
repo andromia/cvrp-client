@@ -8,7 +8,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 const SearchBar = () => {
     return (
         <InputGroup className="mb-3">
-            <FormControl placeholder="Search for an app" aria-label="Search for an app" aria-describedby="basic-addon2" size={"lg"} />
+            <FormControl placeholder="Search solverstack" aria-label="Search solverstack" aria-describedby="basic-addon2" size={"lg"} />
             <InputGroup.Append>
                 <Button variant="outline-secondary">Search</Button>
             </InputGroup.Append>
