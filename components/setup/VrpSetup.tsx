@@ -105,6 +105,10 @@ const VrpSetup = () => {
             complete: function(results) {
                 setupUtils.checkFileData(results.data);
 
+                for (var i = 0; i < results.data.length; i++) {
+                    results.data[i]["quantity"] = parseInt(results.data[i][vehicleUnit]);
+                }
+                
                 setDemand(results.data);
             }
         });
