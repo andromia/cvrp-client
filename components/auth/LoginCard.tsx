@@ -8,7 +8,6 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-import login from "../../../auth/src/routes/controllers/local-auth";
 import RequestEmailModal from "./RequestEmailModal";
 
 const LoginCard = (): ReactElement => {
