@@ -8,7 +8,7 @@ import CardIcon from "./CardIcon";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
-const AppsCardWithIcon = (props) => {
+const ModuleCardWithIcon = (props) => {
     return (
         <Card>
             <CardIcon link={props.link} />
@@ -26,4 +26,4 @@ const AppsCardWithIcon = (props) => {
     );
 };
 
-export default AppsCardWithIcon;
+export default ModuleCardWithIcon;

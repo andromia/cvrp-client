@@ -68,7 +68,7 @@ const LoginCard = (): ReactElement => {
             axios
                 .post(envobj.USER_AUTH_URL + "login", data)
                 .then(res => {
-                    return router.push("/apps");
+                    return router.push("/users/" + isFormSubmit.data.username);
                 })
                 .catch(err => {
                     setFormSubmit({ submit: false, data: { username: "", email: "", password: "" } });

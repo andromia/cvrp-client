@@ -62,7 +62,7 @@ const RegisterCard = (): ReactElement => {
             axios
                 .post(envobj.USER_AUTH_URL + "auth/local/register", data)
                 .then(res => {
-                    return router.push("/apps");
+                    return router.push("/users");
                 })
                 .catch(err => {
                     setFormSubmit({ submit: false, data: { email: "", username: "", password: "" } });

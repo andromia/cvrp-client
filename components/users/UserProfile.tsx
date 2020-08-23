@@ -14,14 +14,12 @@ const UserProfile = (props: Props) => {
             <h5>@{props.username}</h5>
             <p>My name is [TODO]. I love TODOing. Please consider following my profile hehe.</p>
             <h5>Skills</h5>
-            <p>
-                <ul>
-                    <li>This</li>
-                    <li>That</li>
-                    <li>Other this</li>
-                    <li>And that</li>
-                </ul>
-            </p>
+            <ul>
+                <li>This</li>
+                <li>That</li>
+                <li>Other this</li>
+                <li>And that</li>
+            </ul>
         </div>
     );
 };

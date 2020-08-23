@@ -7,8 +7,8 @@ import Col from "react-bootstrap/Col";
 
 // Components
 import Container from "../../components/styled-common/Container";
-import UserProfile from "../../components/apps/UserProfile";
-import AppsBoard from "../../components/apps/AppsBoard";
+import UserProfile from "../../components/users/UserProfile";
+import UserBoard from "../../components/users/UserBoard";
 
 const Type = (): ReactElement => {
     const router = useRouter();
@@ -23,7 +23,7 @@ const Type = (): ReactElement => {
                             <UserProfile username={user} />
                         </Col>
                         <Col className="d-flex justify-content-center pl-5 pr-0" lg={9}>
-                            <AppsBoard />
+                            <UserBoard />
                         </Col>
                     </Row>
                 </Col>

@@ -28,7 +28,7 @@ const axios = require('axios');
 
 const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
 
-const VrpSetup = () => {
+const RouteSetup = () => {
     /**
      * Setup page for VRP module. 
      * 
@@ -213,7 +213,7 @@ const VrpSetup = () => {
 
         // TODO: create asynchronous call
         axios.post(
-            process.env.dev.VRP_SERVICE_URL,
+            process.env.dev.ROUTE_SERVICE_URL,
             {   
                 origin: {
                     "latitude": originLat,
@@ -351,4 +351,4 @@ const VrpSetup = () => {
     );
 };
 
-export default VrpSetup;
+export default RouteSetup;

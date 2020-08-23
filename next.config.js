@@ -7,8 +7,8 @@ module.exports = {
     env: {
         dev: {
             USER_AUTH_URL: "http://localhost:5005/api/v0.1/",
-            VRP_SERVICE_URL: "http://localhost:5000/api/v0.1/vrp",
-            VRP_ORIGIN_SERVICE_URL: "http://localhost:5003/api/v0.1/origin",
+            ROUTE_SERVICE_URL: "http://localhost:5000/api/v0.1/route",
+            DEPOT_SERVICE_URL: "http://localhost:5003/api/v0.1/depot",
             GEOCODE_SERVICE_URL: "http://localhost:5004/api/v0.1/geocode"
         },
         prod: {

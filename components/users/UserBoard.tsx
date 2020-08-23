@@ -1,41 +1,41 @@
 import React from "react";
 
 // Components
-import AppsCardWithIcon from "./AppsCardWithIcon";
+import ModuleCardWithIcon from "./ModuleCardWithIcon";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import SearchBar from "./SearchBar";
 
-const AppsBoard = () => {
+const UserBoard = () => {
     return (
         <div>
             <Row className={"pb-4 mb-2"}>
                 <Col>
-                    <AppsCardWithIcon 
+                    <ModuleCardWithIcon 
                     title={"Geocode"}
                     sub={"@fingafrog (andromia)"}
                     desc={"geocoding module for clean zipcodes"}
                     link={"/setup/geocode"} />
                 </Col>
                 <Col>
-                    <AppsCardWithIcon
-                    title={"Vrp Origin"}
+                    <ModuleCardWithIcon
+                    title={"Depot"}
                     sub={"@fingafrog (andromia)"}
                     desc={"origin location selection module for routing and network flow"}
-                    link={"/setup/vrp-origin"} />
+                    link={"/setup/depot"} />
                 </Col>
                 <Col>
-                    <AppsCardWithIcon
-                    title={"Vrp"}
+                    <ModuleCardWithIcon
+                    title={"Route"}
                     sub={"@fingafrog (andromia)"}
                     desc={"shipment routing module for geocoded demand"}
-                    link={"/setup/vrp"} />
+                    link={"/setup/route"} />
                 </Col>
             </Row>
             <hr />
             <Row className={"pt-5 pb-4 mb-2"}>
                 <Col>
-                    <AppsCardWithIcon 
+                    <ModuleCardWithIcon 
                     title={"Featured Stack"}
                     sub={""}
                     desc={"this is an example featured stack"}
@@ -48,7 +48,7 @@ const AppsBoard = () => {
             {false &&
             <Row className={"pb-4 mb-2"}>
                 <Col>
-                    <AppsCardWithIcon 
+                    <ModuleCardWithIcon 
                     title={"Search Result"}
                     sub={""}
                     desc={"this is an example search result"}
@@ -59,7 +59,7 @@ const AppsBoard = () => {
             {false &&
             <Row className={"pb-4 mb-2"}>
                 <Col>
-                    <AppsCardWithIcon 
+                    <ModuleCardWithIcon 
                     title={"Search Result"}
                     sub={""}
                     desc={"this is an example search result"}
@@ -71,4 +71,4 @@ const AppsBoard = () => {
     );
 };
 
-export default AppsBoard;
+export default UserBoard;

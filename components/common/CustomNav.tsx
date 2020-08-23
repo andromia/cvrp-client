@@ -15,7 +15,7 @@ const CustomNav = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
-                <Nav.Link href="/apps/example-user">Profile</Nav.Link>
+                <Nav.Link href="/users/example-user">Profile</Nav.Link>
                 <NavDropdown title="More" id="basic-nav-dropdown">
                     <NavDropdown.Item href="/auth/login">Login</NavDropdown.Item>
                     <NavDropdown.Item href="/auth/register">Register</NavDropdown.Item>

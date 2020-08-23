@@ -19,7 +19,7 @@ const axios = require('axios');
 
 const svgHeight: number = 350;
 
-const VrpOriginSetup = () => {
+const DepotSetup = () => {
     /**
      * Setup page for geocode module. 
      * 
@@ -69,7 +69,7 @@ const VrpOriginSetup = () => {
                 setDestinations(parsedDestinations);
 
                 axios.post(
-                    process.env.dev.VRP_ORIGIN_SERVICE_URL,
+                    process.env.dev.DEPOT_SERVICE_URL,
                     results.data
                     ).then(function (response) {
                         console.log(response);
@@ -129,4 +129,4 @@ const VrpOriginSetup = () => {
     );
 };
 
-export default VrpOriginSetup;
+export default DepotSetup;
