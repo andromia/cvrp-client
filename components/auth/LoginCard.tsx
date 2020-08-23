@@ -11,12 +11,14 @@ import Form from "react-bootstrap/Form";
 import RequestEmailModal from "./RequestEmailModal";
 
 const LoginCard = (): ReactElement => {
-    const [isFormSubmit, setFormSubmit] = useState({ submit: false, data: { email: "", password: "" } });
-    const [envobj, setEnvObj] = useState({ USER_AUTH_URL: "", USER_CRUD_URL: "" });
+    const [isFormSubmit, setFormSubmit] = useState({ submit: false, data: { username: "", email: "", password: "" } });
+    const [envobj, setEnvObj] = useState({ USER_AUTH_URL: "" });
     const [err, setErr] = useState({ message: "", type: "" });
     const [modal, setModal] = useState(false);
 
-    const userInputRef = useRef<HTMLInputElement>(null);
+    
+    const usernameInputRef = useRef<HTMLInputElement>(null);
+    const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
     const router = useRouter();
@@ -24,21 +26,19 @@ const LoginCard = (): ReactElement => {
 
     useEffect(() => {
         // @ts-ignore
-        const { USER_AUTH_URL, USER_CRUD_URL } = process.env.dev;
+        const { USER_AUTH_URL } = process.env.dev;
         const { query } = router;
 
         if (process.env.NODE_ENV === "development") {
             if (process?.env?.dev) {
                 setEnvObj({
-                    USER_AUTH_URL: USER_AUTH_URL,
-                    USER_CRUD_URL: USER_CRUD_URL
+                    USER_AUTH_URL: USER_AUTH_URL
                 });
             }
         } else {
             if (process?.env?.prod) {
                 setEnvObj({
-                    USER_AUTH_URL: USER_AUTH_URL,
-                    USER_CRUD_URL: USER_CRUD_URL
+                    USER_AUTH_URL: USER_AUTH_URL
                 });
             }
         }
@@ -49,7 +49,7 @@ const LoginCard = (): ReactElement => {
     }, []);
 
     useEffect(() => {
-        if (envobj.USER_AUTH_URL && err.type !== "info") {
+        /*if (envobj.USER_AUTH_URL && err.type !== "info") {
             axios
                 .get(envobj.USER_AUTH_URL + "auth/local/verify")
                 .then(res => {
@@ -59,19 +59,19 @@ const LoginCard = (): ReactElement => {
                 .catch(err => {
                     console.log(err);
                 });
-        }
+        }*/
     }, [envobj]);
 
     useEffect(() => {
         if (isFormSubmit.submit) {
-            const data = { email: isFormSubmit.data.email, password: isFormSubmit.data.password };
+            const data = { username: isFormSubmit.data.username, email: isFormSubmit.data.email, password: isFormSubmit.data.password };
             axios
-                .post(envobj.USER_AUTH_URL + "auth/local/login", data)
+                .post(envobj.USER_AUTH_URL + "login", data)
                 .then(res => {
                     return router.push("/apps");
                 })
                 .catch(err => {
-                    setFormSubmit({ submit: false, data: { email: "", password: "" } });
+                    setFormSubmit({ submit: false, data: { username: "", email: "", password: "" } });
                     setErr({ message: err.message, type: "danger" });
                     setTimeout(() => setErr({ message: "", type: "" }), 10000);
                 });
@@ -80,9 +80,12 @@ const LoginCard = (): ReactElement => {
 
     const handleLogin = e => {
         e.preventDefault();
-        const email = userInputRef?.current?.value || "";
+        
+        const username = usernameInputRef?.current?.value || "";
+        const email = emailInputRef?.current?.value || "";
         const password = passwordInputRef?.current?.value || "";
-        setFormSubmit({ submit: true, data: { email, password } });
+
+        setFormSubmit({ submit: true, data: { username, email, password } });
     };
 
     return (
@@ -97,15 +100,30 @@ const LoginCard = (): ReactElement => {
                     )}
                     <Col>
                         <Form.Group>
-                            <Form.Label className="m-0" column="lg" htmlFor="user-input">
+                            <Form.Label className="m-0" column="lg" htmlFor="username-input">
+                                Username
+                            </Form.Label>
+                            <Form.Control
+                                type="username"
+                                id="username-input"
+                                size="lg"
+                                placeholder="Username"
+                                ref={usernameInputRef}
+                                disabled={err.type === "info"}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group>
+                            <Form.Label className="m-0" column="lg" htmlFor="email-input">
                                 Email
                             </Form.Label>
                             <Form.Control
                                 type="email"
-                                id="user-input"
+                                id="email-input"
                                 size="lg"
                                 placeholder="Email"
-                                ref={userInputRef}
+                                ref={emailInputRef}
                                 disabled={err.type === "info"}
                             />
                         </Form.Group>
@@ -151,12 +169,10 @@ const LoginCard = (): ReactElement => {
 
             <Row className="d-flex flex-column">
                 <Col className="mb-2">
-                    <Button className="w-100">Sign in with Gmail</Button>
+                    <Button className="w-100" disabled>Sign in with Gmail</Button>
                 </Col>
                 <Col className="mb-2">
-                    <a href="http://localhost:8080/auth/github/" className="w-100">
-                        <Button className="w-100">Sign in with GitHub</Button>
-                    </a>
+                    <Button className="w-100" disabled>Sign in with GitHub</Button>
                 </Col>
             </Row>
         </>

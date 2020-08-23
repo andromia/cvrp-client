@@ -6,15 +6,13 @@ module.exports = {
     //   },
     env: {
         dev: {
-            USER_AUTH_URL: "http://localhost:8080/",
-            USER_CRUD_URL: "http://localhost:8081/",
+            USER_AUTH_URL: "http://localhost:5005/api/v0.1/",
             VRP_SERVICE_URL: "http://localhost:5000/api/v0.1/vrp",
             VRP_ORIGIN_SERVICE_URL: "http://localhost:5003/api/v0.1/origin",
             GEOCODE_SERVICE_URL: "http://localhost:5004/api/v0.1/geocode"
         },
         prod: {
-            USER_AUTH_URL: "http://localhost:8080/",
-            USER_CRUD_URL: "http://localhost:8081/"
+            USER_AUTH_URL: "http://localhost:5005/api/v0.1/",
         },
     },
     webpackDevMiddleware: config => { // TODO: dev-specific
