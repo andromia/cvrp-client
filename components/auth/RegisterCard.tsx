@@ -14,12 +14,13 @@ const RegisterCard = (): ReactElement => {
     const [envobj, setEnvObj] = useState({ USER_AUTH_URL: "", USER_CRUD_URL: "" });
     const [err, setErr] = useState({ message: "", type: "" });
 
-    const userInputRef = useRef<HTMLInputElement>(null);
+    const usernameInputRef = useRef<HTMLInputElement>(null);
     const emailInputRef = useRef<HTMLInputElement>(null);
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
     const router = useRouter();
     const toggleLogin = () => router.push("/auth/login");
+    const returnHome = () => router.push("/");
 
     useEffect(() => {
         // @ts-ignore
@@ -43,7 +44,7 @@ const RegisterCard = (): ReactElement => {
     }, []);
 
     useEffect(() => {
-        if (envobj.USER_AUTH_URL && err.type !== "info") {
+        /*if (envobj.USER_AUTH_URL && err.type !== "info") {
             axios
                 .get(envobj.USER_AUTH_URL + "auth/local/verify")
                 .then(res => {
@@ -53,19 +54,19 @@ const RegisterCard = (): ReactElement => {
                 .catch(err => {
                     console.log(err);
                 });
-        }
+        }*/
     }, [envobj]);
 
     useEffect(() => {
         if (isFormSubmit.submit) {
-            const data = { email: isFormSubmit.data.email, username: isFormSubmit.data.username, password: isFormSubmit.data.password };
+            const data = { username: isFormSubmit.data.username, email: isFormSubmit.data.email, password: isFormSubmit.data.password };
             axios
-                .post(envobj.USER_AUTH_URL + "auth/local/register", data)
+                .post(envobj.USER_AUTH_URL + "register", data)
                 .then(res => {
                     return router.push("/users");
                 })
                 .catch(err => {
-                    setFormSubmit({ submit: false, data: { email: "", username: "", password: "" } });
+                    setFormSubmit({ submit: false, data: { username: "", email: "", password: "" } });
                     setErr({ message: err.message, type: "danger" });
                     setTimeout(() => setErr({ message: "", type: "" }), 10000);
                 });
@@ -74,9 +75,11 @@ const RegisterCard = (): ReactElement => {
 
     const handleRegister = e => {
         e.preventDefault();
-        const email = userInputRef?.current?.value || "";
-        const username = emailInputRef?.current?.value || "";
+
+        const username = usernameInputRef?.current?.value || "";
+        const email = emailInputRef?.current?.value || "";
         const password = passwordInputRef?.current?.value || "";
+
         setFormSubmit({ submit: true, data: { email, username, password } });
     };
 
@@ -91,18 +94,18 @@ const RegisterCard = (): ReactElement => {
                     )}
                     <Col>
                         <Form.Group>
-                            <Form.Label className="m-0" column="lg" htmlFor="email-input">
-                                Email
+                            <Form.Label className="m-0" column="lg" htmlFor="user-input">
+                                Username
                             </Form.Label>
-                            <Form.Control type="email" id="email-input" size="lg" placeholder="Email" ref={emailInputRef} />
+                            <Form.Control type="text" id="user-input" size="lg" placeholder="Username" ref={usernameInputRef} />
                         </Form.Group>
                     </Col>
                     <Col>
                         <Form.Group>
-                            <Form.Label className="m-0" column="lg" htmlFor="user-input">
-                                Username
+                            <Form.Label className="m-0" column="lg" htmlFor="email-input">
+                                Email
                             </Form.Label>
-                            <Form.Control type="text" id="user-input" size="lg" placeholder="Username" ref={userInputRef} />
+                            <Form.Control type="email" id="email-input" size="lg" placeholder="Email" ref={emailInputRef} />
                         </Form.Group>
                     </Col>
                     <Col>
@@ -116,11 +119,11 @@ const RegisterCard = (): ReactElement => {
                     <Col>
                         <Row className="btn-row-grp d-flex justify-content-between">
                             <Col className="btn-col">
-                                <Button className="w-100">Guest</Button>
+                                <Button className="w-100" onClick={returnHome}>Guest</Button>
                             </Col>
                             <Col className="btn-col">
                                 <Button type={"submit"} className="w-100">
-                                    Signup
+                                    Register
                                 </Button>
                             </Col>
                         </Row>
@@ -139,10 +142,10 @@ const RegisterCard = (): ReactElement => {
 
             <Row className="d-flex flex-column">
                 <Col className="mb-2">
-                    <Button className="w-100">Sign up with Gmail</Button>
+                    <Button className="w-100" disabled>Sign up with Gmail</Button>
                 </Col>
                 <Col className="mb-2">
-                    <Button className="w-100">Sign up with GitHub</Button>
+                    <Button className="w-100" disabled>Sign up with GitHub</Button>
                 </Col>
             </Row>
         </>

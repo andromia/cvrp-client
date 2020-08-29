@@ -6,13 +6,13 @@ module.exports = {
     //   },
     env: {
         dev: {
-            USER_AUTH_URL: "http://localhost:5005/api/v0.1/",
             ROUTE_SERVICE_URL: "http://localhost:5000/api/v0.1/route",
-            DEPOT_SERVICE_URL: "http://localhost:5003/api/v0.1/depot",
-            GEOCODE_SERVICE_URL: "http://localhost:5004/api/v0.1/geocode"
+            GEOCODE_SERVICE_URL: "http://localhost:5001/api/v0.1/geocode",
+            DEPOT_SERVICE_URL: "http://localhost:5002/api/v0.1/depot",
+            USER_AUTH_URL: "http://localhost:5003/api/v0.1/"
         },
         prod: {
-            USER_AUTH_URL: "http://localhost:5005/api/v0.1/",
+            USER_AUTH_URL: "http://localhost:5003/api/v0.1/",
         },
     },
     webpackDevMiddleware: config => { // TODO: dev-specific

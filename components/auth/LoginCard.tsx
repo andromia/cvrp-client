@@ -23,6 +23,7 @@ const LoginCard = (): ReactElement => {
 
     const router = useRouter();
     const toggleRegister = () => router.push("/auth/register");
+    const returnHome = () => router.push("/");
 
     useEffect(() => {
         // @ts-ignore
@@ -146,7 +147,7 @@ const LoginCard = (): ReactElement => {
                     <Col>
                         <Row className="btn-row-grp d-flex justify-content-between">
                             <Col className="btn-col">
-                                <Button className="w-100">Guest</Button>
+                                <Button className="w-100" onClick={returnHome}>Guest</Button>
                             </Col>
                             <Col className="btn-col">
                                 <Button type="submit" className="w-100">
