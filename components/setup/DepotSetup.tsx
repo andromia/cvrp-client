@@ -70,12 +70,12 @@ const DepotSetup = () => {
 
                 axios.post(
                     process.env.dev.DEPOT_SERVICE_URL,
-                    results.data
+                    {stack_id: 2, nodes: results.data} // NOTE: for MVP stack_id is hardcoded
                     ).then(function (response) {
                         console.log(response);
-                        setOrigins([response.data]);
+                        setOrigins(response.data.depots);
 
-                        const csv = Papa.unparse([response.data]);
+                        const csv = Papa.unparse(response.data.depots);
                         const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                         const csvUrl = window.URL.createObjectURL(csvData);
             
