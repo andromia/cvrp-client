@@ -84,6 +84,7 @@ const GeocodeSetup = () => {
 
     return (
         <Card>
+            <Card.Header><h4>Geocode</h4></Card.Header>
             <Card.Body>
                 <Form>
                     <Row className="mb-4">

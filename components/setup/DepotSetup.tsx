@@ -95,7 +95,9 @@ const DepotSetup = () => {
 
 
     return (
+        
         <Card>
+            <Card.Header><h4>Depot</h4></Card.Header>
             <Card.Body>
                 <Form>
                     <Row className="mb-4">
