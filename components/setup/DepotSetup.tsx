@@ -72,7 +72,7 @@ const DepotSetup = () => {
                     process.env.dev.DEPOT_SERVICE_URL,
                     {stack_id: 2, nodes: results.data} // NOTE: for MVP stack_id is hardcoded
                     ).then(function (response) {
-                        console.log(response);
+                        
                         setOrigins(response.data.depots);
 
                         const csv = Papa.unparse(response.data.depots);

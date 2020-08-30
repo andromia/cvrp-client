@@ -106,7 +106,8 @@ const RouteSetup = () => {
                 setupUtils.checkFileData(results.data);
 
                 for (var i = 0; i < results.data.length; i++) {
-                    results.data[i]["quantity"] = parseInt(results.data[i][vehicleUnit]);
+                    results.data[i].quantity = parseInt(results.data[i][vehicleUnit]);
+                    results.data[i].id = i;
                 }
                 
                 setDemand(results.data);
@@ -164,7 +165,7 @@ const RouteSetup = () => {
 
         for (var i = 0; i < demand.length; i++) {
             data[i]["vehicle_id"] = parsedVehicles[i];
-            data[i]["stop_num"] = parsedStops[i];
+            data[i]["stop_number"] = parsedStops[i];
         }
 
         const csv = Papa.unparse(data);
@@ -215,23 +216,24 @@ const RouteSetup = () => {
         axios.post(
             process.env.dev.ROUTE_SERVICE_URL,
             {   
+                stack_id: 0, // NOTE: for MVP stack_id is hardcoded
                 origin: {
-                    "latitude": originLat,
-                    "longitude": originLon
+                    id: 0, // NOTE: for MVP origin.id is hardcoded
+                    latitude: originLat,
+                    longitude: originLon
                 },
                 vehicle_capacity: vehicleCap,
                 vehicle_definitions: [], // TODO: remove this for MVP
                 unit: vehicleUnit,
                 demand: demand
             }).then(function (response) {
-                console.log(response);
-
-                const parsedVehicles: Array<number> = Array<number>(response.data.solution.length);
-                const parsedStops: Array<number> = Array<number>(response.data.solution.length);
                 
-                for (var i = 0; i < response.data.solution.length; i++) {
-                    parsedVehicles[i] = response.data.solution[i].vehicle_id;
-                    parsedStops[i] = response.data.solution[i].stop_id;
+                const parsedVehicles: Array<number> = Array<number>(response.data.routes.length);
+                const parsedStops: Array<number> = Array<number>(response.data.routes.length);
+                
+                for (var i = 0; i < response.data.routes.length; i++) {
+                    parsedVehicles[i] = response.data.routes[i].vehicle_id;
+                    parsedStops[i] = response.data.routes[i].stop_number;
                 }
 
                 const routes = setupUtils.createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);

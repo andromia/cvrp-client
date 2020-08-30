@@ -60,7 +60,7 @@ const GeocodeSetup = () => {
                     process.env.dev.GEOCODE_SERVICE_URL,
                     {stack_id: 1, zipcodes: results.data} // NOTE: for MVP stack_id is hardcoded
                     ).then(function (response) {
-                        console.log(response);
+                        
                         setDestinations(response.data.geocodes);
 
                         const csv = Papa.unparse(response.data.geocodes);
