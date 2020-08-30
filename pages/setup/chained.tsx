@@ -14,10 +14,18 @@ const Chained = () => {
     return (
         <Container>
             <CustomNav />
-            <Row className="d-flex flex-column justify-content-center align-items-center w-75 mx-auto">
+            <Row className={"d-flex flex-column justify-content-center align-items-center pb-2 w-75 mx-auto"}>
                 <Col className="pt-3">
                     <GeocodeSetup />
+                </Col>
+            </Row>
+            <Row className={"d-flex flex-column justify-content-center align-items-center pb-2 w-75 mx-auto"}>
+                <Col className="pt-3">
                     <DepotSetup />
+                </Col>
+            </Row>
+            <Row className={"d-flex flex-column justify-content-center align-items-center pb-2 w-75 mx-auto"}>
+                <Col className="pt-3">
                     <RouteSetup />
                 </Col>
             </Row>
