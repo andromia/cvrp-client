@@ -16,6 +16,7 @@ import * as setupUtils from "./SetupUtils";
 import * as mapTypes from "../maps/MapTypes";
 
 // Bootstrap
+import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -252,105 +253,118 @@ const RouteSetup = () => {
     }, []);
 
     return (
-        <Card>
-            <Card.Header><h4>Route</h4></Card.Header>
-            <Card.Body>
-                <Form onSubmit={onCreateSubmit}>
-                    <Row className="mb-4">
-                        <Col lg="6">
-                            <Row className="d-flex flex-column">
-                                <Col className="pb-3">
-                                    <div>Origin</div>
-                                </Col>
-                                <Col>
-                                    <Row>
-                                        <Col>
-                                            <FormControl 
-                                            id="origin-lat" 
-                                            ref={latRef} 
-                                            className="d-inline-flex" 
-                                            placeholder="lat." 
-                                            aria-label="Lat." 
-                                            onChange={onOriginInputUpdate} 
-                                            autoComplete="off" />
+        <Accordion defaultActiveKey="2">
+            <Card>
+                <Card.Header>
+                <Row className="d-flex justify-content-end">
+                    <Col>
+                        <h4>Route</h4>
+                    </Col>
+                    <Accordion.Toggle as={Button} eventKey="2">
+                        Toggle Collapse
+                    </Accordion.Toggle>
+                </Row>
+                </Card.Header>
+                <Accordion.Collapse eventKey="2">
+                    <Card.Body>
+                        <Form onSubmit={onCreateSubmit}>
+                            <Row className="mb-4">
+                                <Col lg="6">
+                                    <Row className="d-flex flex-column">
+                                        <Col className="pb-3">
+                                            <div>Origin</div>
                                         </Col>
                                         <Col>
-                                            <FormControl 
-                                            id="origin-lon" 
-                                            ref={lonRef} 
-                                            className="d-inline-flex" 
-                                            placeholder="lon." 
-                                            aria-label="Lon." 
-                                            onChange={onOriginInputUpdate} 
-                                            autoComplete="off"/>
+                                            <Row>
+                                                <Col>
+                                                    <FormControl 
+                                                    id="origin-lat" 
+                                                    ref={latRef} 
+                                                    className="d-inline-flex" 
+                                                    placeholder="lat." 
+                                                    aria-label="Lat." 
+                                                    onChange={onOriginInputUpdate} 
+                                                    autoComplete="off" />
+                                                </Col>
+                                                <Col>
+                                                    <FormControl 
+                                                    id="origin-lon" 
+                                                    ref={lonRef} 
+                                                    className="d-inline-flex" 
+                                                    placeholder="lon." 
+                                                    aria-label="Lon." 
+                                                    onChange={onOriginInputUpdate} 
+                                                    autoComplete="off"/>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col lg="6">
+                                    <Row className="d-flex flex-column">
+                                        <Col className="pb-3">
+                                            <div>Vehicle</div>
+                                        </Col>
+                                        <Col>
+                                            <Row>
+                                                <Col>
+                                                    <FormControl 
+                                                    id="max-vehicle-cap"
+                                                    className="d-inline-flex" 
+                                                    placeholder="capacity" 
+                                                    aria-label="capacity" 
+                                                    onChange={onVehicleCapUpdate} 
+                                                    autoComplete="off" />
+                                                </Col>
+                                                <Col>
+                                                    <FormControl 
+                                                    id="unit" 
+                                                    className="d-inline-flex" 
+                                                    placeholder="unit" 
+                                                    aria-label="unit" 
+                                                    onChange={onVehicleUnitUpdate} 
+                                                    autoComplete="off"/>
+                                                </Col>
+                                            </Row>
                                         </Col>
                                     </Row>
                                 </Col>
                             </Row>
-                        </Col>
-                        <Col lg="6">
-                            <Row className="d-flex flex-column">
-                                <Col className="pb-3">
-                                    <div>Vehicle</div>
-                                </Col>
-                                <Col>
-                                    <Row>
-                                        <Col>
-                                            <FormControl 
-                                            id="max-vehicle-cap"
-                                            className="d-inline-flex" 
-                                            placeholder="capacity" 
-                                            aria-label="capacity" 
-                                            onChange={onVehicleCapUpdate} 
-                                            autoComplete="off" />
-                                        </Col>
-                                        <Col>
-                                            <FormControl 
-                                            id="unit" 
-                                            className="d-inline-flex" 
-                                            placeholder="unit" 
-                                            aria-label="unit" 
-                                            onChange={onVehicleUnitUpdate} 
-                                            autoComplete="off"/>
-                                        </Col>
-                                    </Row>
+                            <Row className="mb-4">
+                                <Col className="p-0">
+                                    <div 
+                                    className="svg-container"
+                                    ref={svgContainerRef}>
+                                            <VrpBubbleMap 
+                                            height={svgHeight}
+                                            width={svgWidth}
+                                            atlasJson={atlasJson}
+                                            originLat={originLat} 
+                                            originLon={originLon} 
+                                            demand={demand}
+                                            routes={routes} />
+                                    </div>
                                 </Col>
                             </Row>
-                        </Col>
-                    </Row>
-                    <Row className="mb-4">
-                        <Col className="p-0">
-                            <div 
-                            className="svg-container"
-                            ref={svgContainerRef}>
-                                    <VrpBubbleMap 
-                                    height={svgHeight}
-                                    width={svgWidth}
-                                    atlasJson={atlasJson}
-                                    originLat={originLat} 
-                                    originLon={originLon} 
-                                    demand={demand}
-                                    routes={routes} />
-                            </div>
-                        </Col>
-                    </Row>
-                    <Row className="d-flex justify-content-end">
-                        {routes.length > 0 &&
-                            <a href={csvUrl}><Button className="download-btn">Download</Button></a>
-                        }
-                        <Col lg="8">
-                            <Form.File 
-                            id="custom-file" 
-                            label={fileName} 
-                            custom onChange={onFileUpdate} />
-                        </Col>
-                        <Col lg="auto">
-                            <Button type="submit">Create</Button>
-                        </Col>
-                    </Row>
-                </Form>
-            </Card.Body>
-        </Card>
+                            <Row className="d-flex justify-content-end">
+                                {routes.length > 0 &&
+                                    <a href={csvUrl}><Button className="download-btn">Download</Button></a>
+                                }
+                                <Col lg="8">
+                                    <Form.File 
+                                    id="custom-file" 
+                                    label={fileName} 
+                                    custom onChange={onFileUpdate} />
+                                </Col>
+                                <Col lg="auto">
+                                    <Button type="submit">Create</Button>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Card.Body>
+                </Accordion.Collapse>
+            </Card>
+        </Accordion>
     );
 };
 

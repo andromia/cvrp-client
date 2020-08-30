@@ -2,15 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import BubbleMap from "../maps/BubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
-import * as mapUtils from "../maps/MapUtils";
-import * as setupUtils from "./SetupUtils";
 import * as mapTypes from "../maps/MapTypes";
 
 // Bootstrap
+import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
@@ -95,39 +93,51 @@ const DepotSetup = () => {
 
 
     return (
-        
-        <Card>
-            <Card.Header><h4>Depot</h4></Card.Header>
-            <Card.Body>
-                <Form>
-                    <Row className="mb-4">
-                        <Col className="p-0">
-                            <div 
-                            className="svg-container"
-                            ref={svgContainerRef}>
-                                <BubbleMap 
-                                height={svgHeight}
-                                width={svgWidth}
-                                atlasJson={atlasJson}
-                                origins={origins}
-                                destinations={destinations} />
-                            </div>
-                        </Col>
-                    </Row>
+        <Accordion defaultActiveKey="0">
+            <Card>
+                <Card.Header>
                     <Row className="d-flex justify-content-end">
-                        {destinations.length > 0 &&
-                            <a href={csvUrl}><Button className="download-btn">Download</Button></a>
-                        }
-                        <Col lg="8">
-                            <Form.File 
-                            id="custom-file" 
-                            label={fileName} 
-                            custom onChange={onFileUpdate} />
+                        <Col>
+                            <h4>Depot</h4>
                         </Col>
+                        <Accordion.Toggle as={Button} eventKey="0">
+                            Toggle Collapse
+                        </Accordion.Toggle>
                     </Row>
-                </Form>
-            </Card.Body>
-        </Card>
+                </Card.Header>
+                <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                        <Form>
+                            <Row className="mb-4">
+                                <Col className="p-0">
+                                    <div 
+                                    className="svg-container"
+                                    ref={svgContainerRef}>
+                                        <BubbleMap 
+                                        height={svgHeight}
+                                        width={svgWidth}
+                                        atlasJson={atlasJson}
+                                        origins={origins}
+                                        destinations={destinations} />
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row className="d-flex justify-content-end">
+                                {destinations.length > 0 &&
+                                    <a href={csvUrl}><Button className="download-btn">Download</Button></a>
+                                }
+                                <Col lg="8">
+                                    <Form.File 
+                                    id="custom-file" 
+                                    label={fileName} 
+                                    custom onChange={onFileUpdate} />
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Card.Body>
+                </Accordion.Collapse>
+            </Card>
+        </Accordion>
     );
 };
 
