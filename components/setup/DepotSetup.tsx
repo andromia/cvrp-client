@@ -95,7 +95,7 @@ const DepotSetup = () => {
     return (
         <Accordion defaultActiveKey="0">
             <Card>
-                <Card.Header>
+                <Accordion.Toggle as={Card.Header} eventKey="0">
                     <Row className="d-flex justify-content-end">
                         <Col>
                             <h4>Depot</h4>
@@ -104,7 +104,7 @@ const DepotSetup = () => {
                             Toggle Collapse
                         </Accordion.Toggle>
                     </Row>
-                </Card.Header>
+                </Accordion.Toggle>
                 <Accordion.Collapse eventKey="0">
                     <Card.Body>
                         <Form>

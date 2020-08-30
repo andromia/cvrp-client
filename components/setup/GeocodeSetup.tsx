@@ -83,7 +83,7 @@ const GeocodeSetup = () => {
     return (
         <Accordion defaultActiveKey="1">
             <Card>
-                <Card.Header>
+                <Accordion.Toggle as={Card.Header} eventKey="1">
                     <Row className="d-flex justify-content-end">
                         <Col>
                             <h4>Geocode</h4>
@@ -92,7 +92,7 @@ const GeocodeSetup = () => {
                             Toggle Collapse
                         </Accordion.Toggle>
                     </Row>
-                </Card.Header>
+                </Accordion.Toggle>
                 <Accordion.Collapse eventKey="1">
                     <Card.Body>
                         <Form>

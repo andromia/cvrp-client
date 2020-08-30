@@ -255,16 +255,16 @@ const RouteSetup = () => {
     return (
         <Accordion defaultActiveKey="2">
             <Card>
-                <Card.Header>
-                <Row className="d-flex justify-content-end">
-                    <Col>
-                        <h4>Route</h4>
-                    </Col>
-                    <Accordion.Toggle as={Button} eventKey="2">
-                        Toggle Collapse
-                    </Accordion.Toggle>
-                </Row>
-                </Card.Header>
+                <Accordion.Toggle as={Card.Header} eventKey="2">
+                    <Row className="d-flex justify-content-end">
+                        <Col>
+                            <h4>Route</h4>
+                        </Col>
+                        <Accordion.Toggle as={Button} eventKey="2">
+                            Toggle Collapse
+                        </Accordion.Toggle>
+                    </Row>
+                </Accordion.Toggle>
                 <Accordion.Collapse eventKey="2">
                     <Card.Body>
                         <Form onSubmit={onCreateSubmit}>
