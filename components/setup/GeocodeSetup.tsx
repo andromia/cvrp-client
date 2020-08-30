@@ -58,12 +58,12 @@ const GeocodeSetup = () => {
             complete: function(results) {
                 axios.post(
                     process.env.dev.GEOCODE_SERVICE_URL,
-                    results.data
+                    {stack_id: 1, zipcodes: results.data} // NOTE: for MVP stack_id is hardcoded
                     ).then(function (response) {
                         console.log(response);
-                        setDestinations(response.data);
+                        setDestinations(response.data.geocodes);
 
-                        const csv = Papa.unparse(response.data);
+                        const csv = Papa.unparse(response.data.geocodes);
                         const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                         const csvUrl = window.URL.createObjectURL(csvData);
             
