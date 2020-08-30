@@ -1,7 +1,7 @@
 import React from "react";
 
 // Components
-import ModuleCardWithIcon from "./ModuleCardWithIcon";
+import StackCardWithIcon from "./StackCardWithIcon";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import SearchBar from "./SearchBar";
@@ -11,21 +11,21 @@ const UserBoard = () => {
         <div>
             <Row className={"pb-4 mb-2"}>
                 <Col>
-                    <ModuleCardWithIcon 
+                    <StackCardWithIcon 
                     title={"Geocode"}
                     sub={"@fingafrog (andromia)"}
                     desc={"geocoding module for clean zipcodes"}
                     link={"/setup/geocode"} />
                 </Col>
                 <Col>
-                    <ModuleCardWithIcon
+                    <StackCardWithIcon
                     title={"Depot"}
                     sub={"@fingafrog (andromia)"}
                     desc={"origin location selection module for routing and network flow"}
                     link={"/setup/depot"} />
                 </Col>
                 <Col>
-                    <ModuleCardWithIcon
+                    <StackCardWithIcon
                     title={"Route"}
                     sub={"@fingafrog (andromia)"}
                     desc={"shipment routing module for geocoded demand"}
@@ -35,7 +35,7 @@ const UserBoard = () => {
             <hr />
             <Row className={"pt-5 pb-4 mb-2"}>
                 <Col>
-                    <ModuleCardWithIcon 
+                    <StackCardWithIcon 
                     title={"Featured Stack"}
                     sub={""}
                     desc={"this is an example featured stack"}
@@ -45,28 +45,24 @@ const UserBoard = () => {
                     <SearchBar />
                 </Col>
             </Row>
-            {false &&
             <Row className={"pb-4 mb-2"}>
                 <Col>
-                    <ModuleCardWithIcon 
+                    <StackCardWithIcon 
                     title={"Search Result"}
                     sub={""}
                     desc={"this is an example search result"}
                     link={""} />
                 </Col>
             </Row>
-            }
-            {false &&
             <Row className={"pb-4 mb-2"}>
                 <Col>
-                    <ModuleCardWithIcon 
+                    <StackCardWithIcon 
                     title={"Search Result"}
                     sub={""}
                     desc={"this is an example search result"}
                     link={""} />
                 </Col>
             </Row>
-            }
         </div>
     );
 };

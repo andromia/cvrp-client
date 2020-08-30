@@ -19,10 +19,10 @@ const CustomNav = () => {
                 <NavDropdown title="More" id="basic-nav-dropdown">
                     <NavDropdown.Item href="/auth/login">Login</NavDropdown.Item>
                     <NavDropdown.Item href="/auth/register">Register</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/trending">Trending</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/discover">Discover</NavDropdown.Item>
+                    <NavDropdown.Item href="/trending">Trending</NavDropdown.Item>
+                    <NavDropdown.Item href="/discover">Discover</NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/create">Create</NavDropdown.Item>
+                    <NavDropdown.Item href="/create">Create</NavDropdown.Item>
                 </NavDropdown>
                 </Nav>
                 <Form inline>
