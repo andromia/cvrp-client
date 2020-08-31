@@ -8,7 +8,9 @@
  *   - fix <a><Button/></a> for download href with just Button
  */
 import React, { useState, useRef, useEffect } from "react";
+
 import Papa from "papaparse";
+
 import VrpBubbleMap from "../maps/VrpBubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapUtils from "../maps/MapUtils";
@@ -27,9 +29,7 @@ import Button from "react-bootstrap/Button";
 const axios = require('axios');
 
 
-const defaultMarkers = [{"latitude": 0., "longitude": 0.}];
-
-const RouteSetup = () => {
+const RouteSetup = (props) => {
     /**
      * Setup page for VRP module. 
      * 
@@ -43,9 +43,8 @@ const RouteSetup = () => {
           [originLat, setOriginLat] = useState<number>(0.),
           [originLon, setOriginLon] = useState<number>(0.),
           [vehicleCap, setVehicleCap] = useState<number>(0),
-          [vehicleUnit, setVehicleUnit] = useState<string>(""),
-          [fileName, setFileName] = useState("demand file"),
-          [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(defaultMarkers),
+          [vehicleUnit, setVehicleUnit] = useState<string>("pallets"),
+          [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(Array(0)),
           [routes, setRoutes] = useState<Array<number>>(Array(0)),
           [csvUrl, setCsvUrl] = useState<string>("");
 
@@ -90,31 +89,19 @@ const RouteSetup = () => {
         setOriginLon(lonInput);
     };
     
-    const onFileUpdate = event => {
-        /**
-         * Event handler for file input.
-         * 
-         * TODO: for performance we may want to consider
-         * leaving data processing to a minimum. Currently
-         * this function formats csv files in array<object> JSON
-         * format.
-         */
-        setFileName(event.target.value.split("\\").splice(-1)[0]);
+    if (props.inputFile.demand && routes.length == 0 && demand.length == 0) {
+        let fileCopy = props.inputFile.demand.slice();
+        setupUtils.checkFileData(fileCopy);
 
-        Papa.parse(event.target.files[0], {
-            header: true,
-            complete: function(results) {
-                setupUtils.checkFileData(results.data);
-
-                for (var i = 0; i < results.data.length; i++) {
-                    results.data[i].quantity = parseInt(results.data[i][vehicleUnit]);
-                    results.data[i].id = i;
-                }
-                
-                setDemand(results.data);
-            }
-        });
-    };
+        for (var i = 0; i < fileCopy.length; i++) {
+            fileCopy[i].quantity = parseInt(fileCopy[i]["pallets"]);
+            fileCopy[i].id = i;
+        }
+        
+        setDemand(fileCopy);
+        setOriginLat(props.inputFile.olat);
+        setOriginLon(props.inputFile.olon);
+    }
 
     const onVehicleCapUpdate = event => {
         /**
@@ -200,7 +187,7 @@ const RouteSetup = () => {
             return;
         }
         
-        if (demand != defaultMarkers) {
+        if (demand != [{"latitude": 0., "longitude": 0.}]) {
             setupUtils.checkUnit(vehicleUnit, demand);
 
         } else {
@@ -241,6 +228,7 @@ const RouteSetup = () => {
 
                 setRoutes(routes);
                 prepareDownload(parsedVehicles, parsedStops);
+                props.setOutputFile(routes);
             }).catch(function (error) {
                 console.log(error);
                 return error;
@@ -282,7 +270,8 @@ const RouteSetup = () => {
                                                     ref={latRef} 
                                                     className="d-inline-flex" 
                                                     placeholder="lat." 
-                                                    aria-label="Lat." 
+                                                    aria-label="Lat."
+                                                    defaultValue={props.inputFile.olat}
                                                     onChange={onOriginInputUpdate} 
                                                     autoComplete="off" />
                                                 </Col>
@@ -293,6 +282,7 @@ const RouteSetup = () => {
                                                     className="d-inline-flex" 
                                                     placeholder="lon." 
                                                     aria-label="Lon." 
+                                                    defaultValue={props.inputFile.olon}
                                                     onChange={onOriginInputUpdate} 
                                                     autoComplete="off"/>
                                                 </Col>
@@ -322,6 +312,7 @@ const RouteSetup = () => {
                                                     className="d-inline-flex" 
                                                     placeholder="unit" 
                                                     aria-label="unit" 
+                                                    value="pallets"
                                                     onChange={onVehicleUnitUpdate} 
                                                     autoComplete="off"/>
                                                 </Col>
@@ -350,15 +341,11 @@ const RouteSetup = () => {
                                 {routes.length > 0 &&
                                     <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                                 }
-                                <Col lg="8">
-                                    <Form.File 
-                                    id="custom-file" 
-                                    label={fileName} 
-                                    custom onChange={onFileUpdate} />
-                                </Col>
+                                {demand.length > 0 &&
                                 <Col lg="auto">
                                     <Button type="submit">Create</Button>
                                 </Col>
+                                }
                             </Row>
                         </Form>
                     </Card.Body>

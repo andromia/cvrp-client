@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, componentDidMount } from "react";
+
 import Papa from "papaparse";
+
 import BubbleMap from "../maps/BubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapTypes from "../maps/MapTypes";
@@ -17,7 +19,7 @@ const axios = require('axios');
 
 const svgHeight: number = 350;
 
-const DepotSetup = () => {
+const DepotSetup = (props) => {
     /**
      * Setup page for geocode module. 
      * 
@@ -27,7 +29,6 @@ const DepotSetup = () => {
     const atlasJson = WorldAtlasJson();
     const svgContainerRef = useRef<HTMLDivElement>(null);
     const [svgWidth, setSvgWidth] = useState<any>(null);
-    const [fileName, setFileName] = useState("destinations file");
     const [csvUrl, setCsvUrl] = useState<string>("");
     const [origins, setOrigins] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
     const [destinations, setDestinations] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
@@ -46,45 +47,37 @@ const DepotSetup = () => {
         }
     }
 
-    const onFileUpdate = event => {
-        /**
-         * Event handler for file input.
-         */
-        setFileName(event.target.value.split("\\").splice(-1)[0]);
+    if (props.inputFile.length > 0 && destinations.length == 0) {
+        let parsedDestinations = Array<mapTypes.CoordinateMarker>(props.inputFile.length);
 
-        Papa.parse(event.target.files[0], {
-            header: true,
-            complete: function(results) {
-                let parsedDestinations = Array<mapTypes.CoordinateMarker>(results.data.length);
+        for (var i = 0; i < props.inputFile.length; i++) {
 
-                for (var i = 0; i < results.data.length; i++) {
-                    parsedDestinations[i] = {
-                        latitude: parseFloat(results.data[i].latitude),
-                        longitude: parseFloat(results.data[i].longitude)
-                    };
-                }
+            parsedDestinations[i] = {
+                latitude: parseFloat(props.inputFile[i].latitude),
+                longitude: parseFloat(props.inputFile[i].longitude)
+            };
+        }
 
-                setDestinations(parsedDestinations);
+        setDestinations(parsedDestinations);
 
-                axios.post(
-                    process.env.dev.DEPOT_SERVICE_URL,
-                    {stack_id: 2, nodes: results.data} // NOTE: for MVP stack_id is hardcoded
-                    ).then(function (response) {
-                        
-                        setOrigins(response.data.depots);
+        axios.post(
+            process.env.dev.DEPOT_SERVICE_URL,
+            {stack_id: 2, nodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
+            ).then(function (response) {
+                
+                setOrigins(response.data.depots);
+                props.setOutputFile(response.data.depots);
 
-                        const csv = Papa.unparse(response.data.depots);
-                        const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-                        const csvUrl = window.URL.createObjectURL(csvData);
-            
-                        setCsvUrl(csvUrl);
-                    }).catch(function (error) {
-                        console.log(error);
-                        return error;
-                    });
-            }
-        });
-    };
+                const csv = Papa.unparse(response.data.depots);
+                const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+                const csvUrl = window.URL.createObjectURL(csvData);
+    
+                setCsvUrl(csvUrl);
+            }).catch(function (error) {
+                console.log(error);
+                return error;
+            });
+    }
 
     useEffect(() => {
         window.addEventListener("load", handleSvgWidth);
@@ -126,12 +119,6 @@ const DepotSetup = () => {
                                 {destinations.length > 0 &&
                                     <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                                 }
-                                <Col lg="8">
-                                    <Form.File 
-                                    id="custom-file" 
-                                    label={fileName} 
-                                    custom onChange={onFileUpdate} />
-                                </Col>
                             </Row>
                         </Form>
                     </Card.Body>

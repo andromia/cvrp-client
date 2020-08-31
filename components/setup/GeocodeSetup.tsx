@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+
 import Papa from "papaparse";
+
 import BubbleMap from "../maps/BubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapTypes from "../maps/MapTypes";
@@ -17,7 +19,7 @@ const axios = require('axios');
 
 const svgHeight: number = 350;
 
-const GeocodeSetup = () => {
+const GeocodeSetup = (props) => {
     /**
      * Setup page for geocode module. 
      * 
@@ -27,7 +29,6 @@ const GeocodeSetup = () => {
     const atlasJson = WorldAtlasJson();
     const svgContainerRef = useRef<HTMLDivElement>(null);
     const [svgWidth, setSvgWidth] = useState<any>(null);
-    const [fileName, setFileName] = useState("zipcode file");
     const [csvUrl, setCsvUrl] = useState<string>("");
     const [destinations, setDestinations] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
 
@@ -45,34 +46,27 @@ const GeocodeSetup = () => {
         }
     }
 
-    const onFileUpdate = event => {
-        /**
-         * Event handler for file input.
-         */
-        setFileName(event.target.value.split("\\").splice(-1)[0]);
+    if (props.inputFile.length > 0 && destinations.length == 0) {
 
-        Papa.parse(event.target.files[0], {
-            header: true,
-            complete: function(results) {
-                axios.post(
-                    process.env.dev.GEOCODE_SERVICE_URL,
-                    {stack_id: 1, zipcodes: results.data} // NOTE: for MVP stack_id is hardcoded
-                    ).then(function (response) {
-                        
-                        setDestinations(response.data.geocodes);
+        axios.post(
+            process.env.dev.GEOCODE_SERVICE_URL,
+            {stack_id: 1, zipcodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
+            ).then(function (response) {
+                
+                setDestinations(response.data.geocodes);
+                props.setOutputFile(response.data.geocodes);
+    
+                const csv = Papa.unparse(response.data.geocodes);
+                const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+                const csvUrl = window.URL.createObjectURL(csvData);
+    
+                setCsvUrl(csvUrl);
+            }).catch(function (error) {
+                console.log(error);
+                return error;
+            });
 
-                        const csv = Papa.unparse(response.data.geocodes);
-                        const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-                        const csvUrl = window.URL.createObjectURL(csvData);
-            
-                        setCsvUrl(csvUrl);
-                    }).catch(function (error) {
-                        console.log(error);
-                        return error;
-                    });
-            }
-        });
-    };
+    }
 
     useEffect(() => {
         window.addEventListener("load", handleSvgWidth);
@@ -96,7 +90,7 @@ const GeocodeSetup = () => {
                 <Accordion.Collapse eventKey="1">
                     <Card.Body>
                         <Form>
-                            <Row className="mb-4">
+                            <Row>
                                 <Col className="p-0">
                                     <div 
                                     className="svg-container"
@@ -114,12 +108,6 @@ const GeocodeSetup = () => {
                                 {destinations.length > 0 &&
                                     <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                                 }
-                                <Col lg="8">
-                                    <Form.File 
-                                    id="custom-file" 
-                                    label={fileName} 
-                                    custom onChange={onFileUpdate} />
-                                </Col>
                             </Row>
                         </Form>
                     </Card.Body>
