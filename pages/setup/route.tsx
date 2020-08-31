@@ -14,7 +14,7 @@ import RouteSetup from "../../components/setup/RouteSetup";
 
 const Route = () => {
     const [fileName, setFileName] = useState("zipcode file");
-    const [file, setFile] = useState([]);
+    const [file, setFile] = useState();
     const [result, setResult] = useState([]);
 
     const onFileUpdate = event => {
@@ -41,9 +41,7 @@ const Route = () => {
             <Row className="d-flex flex-column justify-content-center align-items-center w-75 mx-auto">
                 <Col className="pt-3">
                     <RouteSetup
-                    olat={0.}
-                    olon={0.}
-                    inputFile={file} 
+                    inputFile={{demand: file, olat: null, olon: null}} 
                     setOutputFile={updateResult} />
                 </Col>
             </Row>
