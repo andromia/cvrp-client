@@ -42,7 +42,7 @@ const RouteSetup = (props) => {
           [svgWidth, setSvgWidth] = useState<any>(null),
           [originLat, setOriginLat] = useState<number>(0.),
           [originLon, setOriginLon] = useState<number>(0.),
-          [vehicleCap, setVehicleCap] = useState<number>(0),
+          [vehicleCap, setVehicleCap] = useState<number>(26),
           [vehicleUnit, setVehicleUnit] = useState<string>("pallets"),
           [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(Array(0)),
           [routes, setRoutes] = useState<Array<number>>(Array(0)),
@@ -94,13 +94,16 @@ const RouteSetup = (props) => {
         setupUtils.checkFileData(fileCopy);
 
         for (var i = 0; i < fileCopy.length; i++) {
-            fileCopy[i].quantity = parseInt(fileCopy[i]["pallets"]);
+            fileCopy[i].quantity = parseInt(fileCopy[i][vehicleUnit]);
             fileCopy[i].id = i;
         }
         
         setDemand(fileCopy);
-        setOriginLat(props.inputFile.olat);
-        setOriginLon(props.inputFile.olon);
+
+        if ((!originLat || originLat == 0) && (!originLon || originLon == 0) && !(!props.inputFile.olat && !props.inputFile.olon)) {
+            setOriginLat(props.inputFile.olat);
+            setOriginLon(props.inputFile.olon);
+        }
     }
 
     const onVehicleCapUpdate = event => {
@@ -302,9 +305,11 @@ const RouteSetup = (props) => {
                                                     id="max-vehicle-cap"
                                                     className="d-inline-flex" 
                                                     placeholder="capacity" 
-                                                    aria-label="capacity" 
+                                                    aria-label="capacity"
+                                                    value={26}
                                                     onChange={onVehicleCapUpdate} 
-                                                    autoComplete="off" />
+                                                    autoComplete="off" 
+                                                    disabled/>
                                                 </Col>
                                                 <Col>
                                                     <FormControl 
@@ -314,7 +319,8 @@ const RouteSetup = (props) => {
                                                     aria-label="unit" 
                                                     value="pallets"
                                                     onChange={onVehicleUnitUpdate} 
-                                                    autoComplete="off"/>
+                                                    autoComplete="off"
+                                                    disabled/>
                                                 </Col>
                                             </Row>
                                         </Col>
