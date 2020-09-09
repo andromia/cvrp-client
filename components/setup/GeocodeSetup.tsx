@@ -53,10 +53,25 @@ const GeocodeSetup = (props) => {
             {stack_id: 1, zipcodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
             ).then(function (response) {
                 
-                setDestinations(response.data.geocodes);
-                props.setOutputFile(response.data.geocodes);
+                let cleanGeocodes: Array<mapTypes.CoordinateMarker> = [];
+                let nullIsland: Array<String> = [];
+
+                for (var i = 0; i < response.data.geocodes.length; i++) {
+                    if (response.data.geocodes[i].latitude == 0 && response.data.geocodes[i].longitude == 0) {
+                        nullIsland.push("zipcode:" + response.data.geocodes[i].zipcode + " country: " + response.data.geocodes[i].country);
+                    } else {
+                        cleanGeocodes.push(response.data.geocodes[i]);
+                    }
+                }
+
+                if (nullIsland.length > 0) {
+                    alert("The following data failed to geocode: " + nullIsland.join(", "));
+                }
+
+                setDestinations(cleanGeocodes);
+                props.setOutputFile(cleanGeocodes);
     
-                const csv = Papa.unparse(response.data.geocodes);
+                const csv = Papa.unparse(cleanGeocodes);
                 const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                 const csvUrl = window.URL.createObjectURL(csvData);
     
