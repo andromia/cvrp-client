@@ -27,37 +27,3 @@ export const checkUnit = (unit: String, data: any) => {
         alert("unit entered cannot be found in the demand file!");
     }
 }
-
-export const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<number>, stopNums: Array<number>) => {
-    /**
-     * Create list of objects {stops: [[oLon, oLat] ...]} where
-     * origin is the first and last stop.
-     * 
-     * TODO: use stops for order.
-     */
-    let routed = {};
-
-    for (var i = 0; i < demand.length; i++) {
-        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
-
-        if (routed.hasOwnProperty(vehicles[i])) {
-            routed[vehicles[i]].stops.push(coordinates);
-        } else {
-            routed[vehicles[i]] = {
-                stops: [[oLon, oLat], coordinates]
-            }
-        }
-    }
-
-    // convert routes to list of objects
-    const keys = Object.keys(routed);
-    let routes = Array(keys.length);
-
-    for (var i = 0; i < keys.length; i++) {
-        let route = routed[keys[i]];
-        const allStops = route.stops.concat([[oLon, oLat]]);
-        routes[i] = {stops: allStops};
-    }
-
-    return routes;
-}
