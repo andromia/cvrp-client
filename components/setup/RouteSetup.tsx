@@ -29,6 +29,41 @@ import Button from "react-bootstrap/Button";
 const axios = require('axios');
 
 
+const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<number>, stopNums: Array<number>) => {
+    /**
+     * Create list of objects {stops: [[oLon, oLat] ...]} where
+     * origin is the first and last stop.
+     * 
+     * TODO: use stops for order.
+     */
+    let routed = {};
+
+    for (var i = 0; i < demand.length; i++) {
+        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
+
+        if (routed.hasOwnProperty(vehicles[i])) {
+            routed[vehicles[i]].stops.push(coordinates);
+        } else {
+            routed[vehicles[i]] = {
+                stops: [[oLon, oLat], coordinates]
+            }
+        }
+    }
+
+    // convert routes to list of objects
+    const keys = Object.keys(routed);
+    let routes = Array(keys.length);
+
+    for (var i = 0; i < keys.length; i++) {
+        let route = routed[keys[i]];
+        const allStops = route.stops.concat([[oLon, oLat]]);
+        routes[i] = {stops: allStops};
+    }
+
+    return routes;
+}
+
+
 const RouteSetup = (props) => {
     /**
      * Setup page for VRP module. 
@@ -157,6 +192,15 @@ const RouteSetup = (props) => {
         for (var i = 0; i < demand.length; i++) {
             data[i]["vehicle_id"] = parsedVehicles[i];
             data[i]["stop_number"] = parsedStops[i];
+
+            // 4mvp
+            if (data[i].hasOwnProperty("quantity")) {
+                delete data[i]["quantity"];
+            }
+
+            if (data[i].hasOwnProperty("id")) {
+                delete data[i]["id"];
+            }
         }
 
         const csv = Papa.unparse(data);
@@ -227,10 +271,11 @@ const RouteSetup = (props) => {
                     parsedStops[i] = response.data.routes[i].stop_number;
                 }
 
-                const routes = setupUtils.createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
+                const routes = createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
 
                 setRoutes(routes);
                 prepareDownload(parsedVehicles, parsedStops);
+                
                 props.setOutputFile(routes);
             }).catch(function (error) {
                 console.log(error);
