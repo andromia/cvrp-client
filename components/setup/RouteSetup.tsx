@@ -43,7 +43,7 @@ const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<n
 
         if (vehicles[i] && routed.hasOwnProperty(vehicles[i])) {
             routed[vehicles[i]].stops.push(coordinates);
-        } else {
+        } else if (vehicles[i]) {
             routed[vehicles[i]] = {
                 stops: [[oLon, oLat], coordinates]
             }
@@ -263,20 +263,12 @@ const RouteSetup = (props) => {
                 demand: demand
             }).then(function (response) {
                 
-                const parsedVehicles: Array<number> = Array<number>();
-                const parsedStops: Array<number> = Array<number>();
+                const parsedVehicles: Array<number> = Array<number>(response.data.routes.length);
+                const parsedStops: Array<number> = Array<number>(response.data.routes.length);
                 
                 for (var i = 0; i < response.data.routes.length; i++) {
-                    let vehicle_id = response.data.routes[i].vehicle_id;
-                    let stop_num = response.data.routes[i].stop_number;
-                    
-                    if (vehicle_id) {
-                        parsedVehicles.push(vehicle_id);
-                    }
-                    if (stop_num) {
-                        parsedStops.push(stop_num);
-                    }
-
+                    parsedVehicles[i] = response.data.routes[i].vehicle_id;
+                    parsedStops[i] = response.data.routes[i].stop_number;
                 }
 
                 const routes = createRoutes(originLat, originLon, demand, parsedVehicles, parsedStops);
