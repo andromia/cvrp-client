@@ -39,6 +39,7 @@ const VrpBubbleMap = (props) => {
                     name={demandCircleClassName} 
                     lat={d.latitude} 
                     lon={d.longitude} 
+                    d0={d.quantity}
                     projection={projection}
                     size={demandCircleSize} />
                 ))}
