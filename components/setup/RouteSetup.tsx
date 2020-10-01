@@ -29,6 +29,13 @@ import Button from "react-bootstrap/Button";
 const axios = require('axios');
 
 
+interface RouteStruct {
+    any: { 
+        stopCount: number,
+        stops: Array<Array<number>>
+    }
+}
+
 const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<number>, stopNums: Array<number>) => {
     /**
      * Create list of objects {stops: [[oLon, oLat] ...]} where
@@ -38,26 +45,46 @@ const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<n
      */
     let routed = {};
 
+    // process stop counts per route (vehicle)
     for (var i = 0; i < demand.length; i++) {
-        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
-
-        if (vehicles[i] && routed.hasOwnProperty(vehicles[i])) {
-            routed[vehicles[i]].stops.push(coordinates);
-        } else if (vehicles[i]) {
+        if (vehicles[i] != undefined && vehicles[i] != null && routed.hasOwnProperty(vehicles[i])) {
+            if (routed[vehicles[i]].stopCount < stopNums[i]) {
+                routed[vehicles[i]].stopCount = stopNums[i];
+            }
+        } else if (vehicles[i] != undefined && vehicles[i] != null) {
             routed[vehicles[i]] = {
-                stops: [[oLon, oLat], coordinates]
+                stopCount: stopNums[i]
             }
         }
     }
 
-    // convert routes to list of objects
     const keys = Object.keys(routed);
+
+    // initialize stops using stopCount
+    for (var i = 0; i < keys.length; i++) {
+        // add 2 spots for depot (depart and return)
+        routed[keys[i]].stops = Array<Array<number>>(routed[keys[i]].stopCount + 2);
+        routed[keys[i]].stops[0] = [oLon, oLat];
+    }
+
+    // TODO: replace
+    for (var i = 0; i < demand.length; i++) {
+        const coordinates = [parseFloat(demand[i].longitude), parseFloat(demand[i].latitude)];
+
+        if (vehicles[i] === undefined || vehicles[i] === null) {
+            continue;
+        } else {
+            routed[vehicles[i]].stops[stopNums[i]] = coordinates;
+        }
+    }
+
+    // convert routes to list of objects
     let routes = Array(keys.length);
 
     for (var i = 0; i < keys.length; i++) {
         let route = routed[keys[i]];
-        const allStops = route.stops.concat([[oLon, oLat]]);
-        routes[i] = {stops: allStops};
+        route.stops[route.stops.length - 1] = [oLon, oLat];
+        routes[i] = {stops: route.stops};
     }
 
     return routes;
