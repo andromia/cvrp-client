@@ -16,6 +16,7 @@ import WorldAtlasJson from "../maps/MapJson";
 import * as mapUtils from "../maps/MapUtils";
 import * as setupUtils from "./SetupUtils";
 import * as mapTypes from "../maps/MapTypes";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 // Bootstrap
 import Accordion from "react-bootstrap/Accordion";
@@ -108,7 +109,8 @@ const RouteSetup = (props) => {
           [vehicleUnit, setVehicleUnit] = useState<string>("pallets"),
           [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(Array(0)),
           [routes, setRoutes] = useState<Array<number>>(Array(0)),
-          [csvUrl, setCsvUrl] = useState<string>("");
+          [csvUrl, setCsvUrl] = useState<string>(""),
+          [loading, setLoading] = useState<boolean>(false);
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
     const latRef = useRef<HTMLInputElement>(null),
@@ -274,6 +276,8 @@ const RouteSetup = (props) => {
             alert("demand latitudes and longitudes must be within the contiguous USA!");
         }
 
+        setLoading(true);
+
         // TODO: create asynchronous call
         axios.post(
             process.env.dev.ROUTE_SERVICE_URL,
@@ -304,10 +308,13 @@ const RouteSetup = (props) => {
                 prepareDownload(parsedVehicles, parsedStops);
                 
                 props.setOutputFile(routes);
+
+                setLoading(false);
             }).catch(function (error) {
                 console.log(error);
                 return error;
             });
+
     };
 
     useEffect(() => {
@@ -421,7 +428,7 @@ const RouteSetup = (props) => {
                                 }
                                 {demand.length > 0 &&
                                 <Col lg="auto">
-                                    <Button type="submit">Create</Button>
+                                    <Button type="submit">{loading ? <LoadingSpinner /> : "Create"}</Button>
                                 </Col>
                                 }
                             </Row>
