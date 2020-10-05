@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, componentDidMount } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Papa from "papaparse";
 
@@ -20,7 +20,7 @@ const axios = require('axios');
 
 const svgHeight: number = 350;
 
-const DepotSetup = (props) => {
+const GeocodeStack = (props) => {
     /**
      * Setup page for geocode module. 
      * 
@@ -31,10 +31,9 @@ const DepotSetup = (props) => {
     const svgContainerRef = useRef<HTMLDivElement>(null);
     const [svgWidth, setSvgWidth] = useState<any>(null);
     const [csvUrl, setCsvUrl] = useState<string>("");
-    const [origins, setOrigins] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
     const [destinations, setDestinations] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
     const [loading, setLoading] = useState<boolean>(false);
-
+ 
     const handleSvgWidth = () => {
         /**
          * Get current width of div containing rendered SVG and 
@@ -50,28 +49,32 @@ const DepotSetup = (props) => {
     }
 
     if (props.inputFile.length > 0 && destinations.length == 0) {
-        let parsedDestinations = Array<mapTypes.CoordinateMarker>(props.inputFile.length);
-
-        for (var i = 0; i < props.inputFile.length; i++) {
-
-            parsedDestinations[i] = {
-                latitude: parseFloat(props.inputFile[i].latitude),
-                longitude: parseFloat(props.inputFile[i].longitude)
-            };
-        }
-
-        setDestinations(parsedDestinations);
 
         axios.post(
-            process.env.dev.DEPOT_SERVICE_URL,
-            {stack_id: 2, nodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
+            process.env.dev.GEOCODE_SERVICE_URL,
+            {stack_id: 1, zipcodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
             ).then(function (response) {
                 setLoading(true); // NOTE: this does not work and probably due to how the async call is updating state/when
                 
-                setOrigins(response.data.depots);
-                props.setOutputFile(response.data.depots);
+                let cleanGeocodes: Array<mapTypes.CoordinateMarker> = [];
+                let nullIsland: Array<String> = [];
 
-                const csv = Papa.unparse(response.data.depots);
+                for (var i = 0; i < response.data.geocodes.length; i++) {
+                    if (response.data.geocodes[i].latitude == 0 && response.data.geocodes[i].longitude == 0) {
+                        nullIsland.push("zipcode:" + response.data.geocodes[i].zipcode + " country: " + response.data.geocodes[i].country);
+                    } else {
+                        cleanGeocodes.push(response.data.geocodes[i]);
+                    }
+                }
+
+                if (nullIsland.length > 0) {
+                    alert("The following data failed to geocode: " + nullIsland.join(", "));
+                }
+
+                setDestinations(cleanGeocodes);
+                props.setOutputFile(cleanGeocodes);
+    
+                const csv = Papa.unparse(cleanGeocodes);
                 const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                 const csvUrl = window.URL.createObjectURL(csvData);
                 setCsvUrl(csvUrl);
@@ -81,7 +84,7 @@ const DepotSetup = (props) => {
                 console.log(error);
                 setLoading(false);
 
-                return error;
+                return error; // TODO: figure out if this return is necessary.
             });
     }
 
@@ -92,22 +95,22 @@ const DepotSetup = (props) => {
 
 
     return (
-        <Accordion defaultActiveKey="0">
+        <Accordion defaultActiveKey="1">
             <Card>
-                <Accordion.Toggle as={Card.Header} eventKey="0">
+                <Accordion.Toggle as={Card.Header} eventKey="1">
                     <Row className="d-flex justify-content-end">
                         <Col>
-                            <h4>Depot</h4>
+                            <h4>Geocode</h4>
                         </Col>
-                        <Accordion.Toggle as={Button} eventKey="0">
+                        <Accordion.Toggle as={Button} eventKey="1">
                             Toggle Collapse
                         </Accordion.Toggle>
                     </Row>
                 </Accordion.Toggle>
-                <Accordion.Collapse eventKey="0">
+                <Accordion.Collapse eventKey="1">
                     <Card.Body>
                         <Form>
-                            <Row className="mb-4">
+                            <Row>
                                 <Col className="p-0">
                                     <div 
                                     className="svg-container"
@@ -116,7 +119,7 @@ const DepotSetup = (props) => {
                                         height={svgHeight}
                                         width={svgWidth}
                                         atlasJson={atlasJson}
-                                        origins={origins}
+                                        origins={[]}
                                         destinations={destinations} />
                                     </div>
                                 </Col>
@@ -135,4 +138,4 @@ const DepotSetup = (props) => {
     );
 };
 
-export default DepotSetup;
+export default GeocodeStack;

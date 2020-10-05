@@ -15,21 +15,21 @@ const UserBoard = () => {
                     title={"Geocode"}
                     sub={"@fingafrog (andromia)"}
                     desc={"geocoding module for clean zipcodes"}
-                    link={"/setup/geocode"} />
+                    link={"/stack/geocode"} />
                 </Col>
                 <Col>
                     <StackCardWithIcon
                     title={"Depot"}
                     sub={"@fingafrog (andromia)"}
                     desc={"origin location selection module for routing and network flow"}
-                    link={"/setup/depot"} />
+                    link={"/stack/depot"} />
                 </Col>
                 <Col>
                     <StackCardWithIcon
                     title={"Route"}
                     sub={"@fingafrog (andromia)"}
                     desc={"shipment routing module for geocoded demand"}
-                    link={"/setup/route"} />
+                    link={"/stack/route"} />
                 </Col>
             </Row>
             <hr />

@@ -14,7 +14,7 @@ import Papa from "papaparse";
 import VrpBubbleMap from "../maps/VrpBubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapUtils from "../maps/MapUtils";
-import * as setupUtils from "./SetupUtils";
+import * as utils from "./StackUtils";
 import * as mapTypes from "../maps/MapTypes";
 import LoadingSpinner from "../common/LoadingSpinner";
 
@@ -92,7 +92,7 @@ const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<n
 }
 
 
-const RouteSetup = (props) => {
+const RouteStack = (props) => {
     /**
      * Setup page for VRP module. 
      * 
@@ -146,8 +146,8 @@ const RouteSetup = (props) => {
         const latInput = Number(latRef.current?.value);
         const lonInput = Number(lonRef.current?.value);
 
-        setupUtils.checkNum(latInput);
-        setupUtils.checkNum(lonInput);
+        utils.checkNum(latInput);
+        utils.checkNum(lonInput);
 
         setOriginLat(latInput);
         setOriginLon(lonInput);
@@ -155,7 +155,7 @@ const RouteSetup = (props) => {
     
     if (props.inputFile.demand && routes.length == 0 && demand.length == 0) {
         let fileCopy = props.inputFile.demand.slice();
-        setupUtils.checkFileData(fileCopy);
+        utils.checkFileData(fileCopy);
 
         for (var i = 0; i < fileCopy.length; i++) {
             fileCopy[i].quantity = parseInt(fileCopy[i][vehicleUnit]);
@@ -264,7 +264,7 @@ const RouteSetup = (props) => {
         }
         
         if (demand != [{"latitude": 0., "longitude": 0.}]) {
-            setupUtils.checkUnit(vehicleUnit, demand);
+            utils.checkUnit(vehicleUnit, demand);
 
         } else {
             alert("demand file is invalid!");
@@ -442,4 +442,4 @@ const RouteSetup = (props) => {
     );
 };
 
-export default RouteSetup;
+export default RouteStack;

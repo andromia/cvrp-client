@@ -23,7 +23,7 @@ const Discover = () => {
                     title={"Route"}
                     sub={"Super Module (created by @cnp)"}
                     desc={"shipment routing for origin-positioned & geocoded demand .csv data"}
-                    link={"/setup/route"} />
+                    link={"/stack/route"} />
                 </Col>
             </Row>
             <hr/>
