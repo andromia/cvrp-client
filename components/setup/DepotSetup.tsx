@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import BubbleMap from "../maps/BubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapTypes from "../maps/MapTypes";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 // Bootstrap
 import Accordion from "react-bootstrap/Accordion";
@@ -32,6 +33,7 @@ const DepotSetup = (props) => {
     const [csvUrl, setCsvUrl] = useState<string>("");
     const [origins, setOrigins] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
     const [destinations, setDestinations] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleSvgWidth = () => {
         /**
@@ -64,6 +66,7 @@ const DepotSetup = (props) => {
             process.env.dev.DEPOT_SERVICE_URL,
             {stack_id: 2, nodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
             ).then(function (response) {
+                setLoading(true); // NOTE: this does not work and probably due to how the async call is updating state/when
                 
                 setOrigins(response.data.depots);
                 props.setOutputFile(response.data.depots);
@@ -71,10 +74,13 @@ const DepotSetup = (props) => {
                 const csv = Papa.unparse(response.data.depots);
                 const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                 const csvUrl = window.URL.createObjectURL(csvData);
-    
                 setCsvUrl(csvUrl);
+
+                setLoading(false);
             }).catch(function (error) {
                 console.log(error);
+                setLoading(false);
+
                 return error;
             });
     }
@@ -116,6 +122,7 @@ const DepotSetup = (props) => {
                                 </Col>
                             </Row>
                             <Row className="d-flex justify-content-end">
+                                {loading && <Button className="download-btn"><LoadingSpinner /></Button>}
                                 {destinations.length > 0 &&
                                     <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                                 }

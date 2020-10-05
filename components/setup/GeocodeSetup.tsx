@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import BubbleMap from "../maps/BubbleMap";
 import WorldAtlasJson from "../maps/MapJson";
 import * as mapTypes from "../maps/MapTypes";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 // Bootstrap
 import Accordion from "react-bootstrap/Accordion";
@@ -31,7 +32,8 @@ const GeocodeSetup = (props) => {
     const [svgWidth, setSvgWidth] = useState<any>(null);
     const [csvUrl, setCsvUrl] = useState<string>("");
     const [destinations, setDestinations] = useState<Array<mapTypes.CoordinateMarker>>(Array<mapTypes.CoordinateMarker>(0));
-
+    const [loading, setLoading] = useState<boolean>(false);
+ 
     const handleSvgWidth = () => {
         /**
          * Get current width of div containing rendered SVG and 
@@ -52,6 +54,7 @@ const GeocodeSetup = (props) => {
             process.env.dev.GEOCODE_SERVICE_URL,
             {stack_id: 1, zipcodes: props.inputFile} // NOTE: for MVP stack_id is hardcoded
             ).then(function (response) {
+                setLoading(true); // NOTE: this does not work and probably due to how the async call is updating state/when
                 
                 let cleanGeocodes: Array<mapTypes.CoordinateMarker> = [];
                 let nullIsland: Array<String> = [];
@@ -74,13 +77,15 @@ const GeocodeSetup = (props) => {
                 const csv = Papa.unparse(cleanGeocodes);
                 const csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
                 const csvUrl = window.URL.createObjectURL(csvData);
-    
                 setCsvUrl(csvUrl);
+
+                setLoading(false);
             }).catch(function (error) {
                 console.log(error);
-                return error;
-            });
+                setLoading(false);
 
+                return error; // TODO: figure out if this return is necessary.
+            });
     }
 
     useEffect(() => {
@@ -120,6 +125,7 @@ const GeocodeSetup = (props) => {
                                 </Col>
                             </Row>
                             <Row className="d-flex justify-content-end">
+                                {loading && <Button className="download-btn"><LoadingSpinner /></Button>}
                                 {destinations.length > 0 &&
                                     <a href={csvUrl}><Button className="download-btn">Download</Button></a>
                                 }
