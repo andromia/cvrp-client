@@ -99,22 +99,22 @@ const RouteSetup = (props) => {
      * Requires users to input origin, vehicle constraints,
      * and demand in the form of a csv file.
      */
-    const svgContainerRef = useRef<HTMLDivElement>(null),
-          svgHeight: number = 350,
-          atlasJson = WorldAtlasJson(),
-          [svgWidth, setSvgWidth] = useState<any>(null),
-          [originLat, setOriginLat] = useState<number>(0.),
-          [originLon, setOriginLon] = useState<number>(0.),
-          [vehicleCap, setVehicleCap] = useState<number>(26),
-          [vehicleUnit, setVehicleUnit] = useState<string>("pallets"),
-          [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(Array(0)),
-          [routes, setRoutes] = useState<Array<number>>(Array(0)),
-          [csvUrl, setCsvUrl] = useState<string>(""),
-          [loading, setLoading] = useState<boolean>(false);
+    const svgContainerRef = useRef<HTMLDivElement>(null);
+    const svgHeight: number = 350;
+    const atlasJson = WorldAtlasJson();
+    const [svgWidth, setSvgWidth] = useState<any>(null);
+    const [originLat, setOriginLat] = useState<number>(0.);
+    const [originLon, setOriginLon] = useState<number>(0.);
+    const [vehicleCap, setVehicleCap] = useState<number>(26);
+    const [vehicleUnit, setVehicleUnit] = useState<string>("pallets");
+    const [demand, setDemand] = useState<Array<mapTypes.CoordinateMarker>>(Array(0));
+    const [routes, setRoutes] = useState<Array<number>>(Array(0));
+    const [csvUrl, setCsvUrl] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     // input refs used to check origin inputs dual-validity; both must be valid coordinates.
-    const latRef = useRef<HTMLInputElement>(null),
-          lonRef = useRef<HTMLInputElement>(null);
+    const latRef = useRef<HTMLInputElement>(null);
+    const lonRef = useRef<HTMLInputElement>(null);
 
     const handleSvgWidth = () => {
         /**
@@ -306,15 +306,17 @@ const RouteSetup = (props) => {
 
                 setRoutes(routes);
                 prepareDownload(parsedVehicles, parsedStops);
-                
                 props.setOutputFile(routes);
 
                 setLoading(false);
             }).catch(function (error) {
                 console.log(error);
-                return error;
+                setLoading(false);
+
+                return error; // TODO: figure out if this is necessary
             });
 
+            
     };
 
     useEffect(() => {
