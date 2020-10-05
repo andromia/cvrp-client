@@ -26,8 +26,8 @@ const CustomNav = () => {
                 </NavDropdown>
                 </Nav>
                 <Form inline>
-                <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                <Button variant="outline-success">Search</Button>
+                <FormControl type="text" placeholder="Coming soon..." className="mr-sm-2" />
+                <Button variant="outline-success" disabled>Search</Button>
                 </Form>
             </Navbar.Collapse>
         </Navbar>
