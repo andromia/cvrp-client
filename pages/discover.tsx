@@ -20,10 +20,10 @@ const Discover = () => {
             <Row className={"d-flex flex-column justify-content-center align-items-center pb-4 mb-2 w-50 mx-auto"}>
                 <Col>
                     <StackCardWithIcon 
-                    title={"Route"}
+                    title={"ShipmentRouting"}
                     sub={"Super Module (created by @cnp)"}
                     desc={"shipment routing for origin-positioned & geocoded demand .csv data"}
-                    link={"/stack/route"} />
+                    link={"/stacks/ShipmentRouting"} />
                 </Col>
             </Row>
             <hr/>
@@ -39,7 +39,7 @@ const Discover = () => {
             <Row className={"d-flex flex-column justify-content-center align-items-center pb-4 mb-2 w-50 mx-auto"}>
                 <Col>
                     <StackCardWithIcon 
-                    title={"Depot"}
+                    title={"SupplyChainDepot"}
                     sub={"Coming soon..."}
                     desc={"origin location positioning within geocoded demand .csv data"}
                     link={""} />
@@ -48,8 +48,8 @@ const Discover = () => {
             <Row className={"d-flex flex-column justify-content-center align-items-center pb-4 mb-2 w-50 mx-auto"}>
                 <Col>
                     <StackCardWithIcon 
-                    title={"Chained Stack Demo"}
-                    sub={"Geocode, Depot, Route (Coming soon...)"}
+                    title={"TransportationModelingStack"}
+                    sub={"Geocode, SupplyChainDepot, ShipmentRouting (Coming soon...)"}
                     desc={"this is an example of a stack a user creates to chain multiple stacks together"}
                     link={""} />
                 </Col>
