@@ -9,7 +9,7 @@ import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 
 import CustomNav from "../../components/common/CustomNav";
-import RouteStack from "../../components/stacks/RouteStack";
+import ShipmentRoutingStack from "../../components/stacks/ShipmentRoutingStack";
 
 
 const Route = () => {
@@ -40,7 +40,7 @@ const Route = () => {
             <CustomNav />
             <Row className="d-flex flex-column justify-content-center align-items-center w-75 mx-auto">
                 <Col className="pt-3">
-                    <RouteStack
+                    <ShipmentRoutingStack
                     inputFile={{demand: file, olat: null, olon: null}} 
                     setOutputFile={updateResult} />
                 </Col>

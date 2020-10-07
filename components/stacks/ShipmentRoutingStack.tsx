@@ -92,7 +92,7 @@ const createRoutes = (oLat: number, oLon: number, demand: any, vehicles: Array<n
 }
 
 
-const RouteStack = (props) => {
+const ShipmentRoutingStack = (props) => {
     /**
      * Setup page for VRP module. 
      * 
@@ -442,4 +442,4 @@ const RouteStack = (props) => {
     );
 };
 
-export default RouteStack;
+export default ShipmentRoutingStack;

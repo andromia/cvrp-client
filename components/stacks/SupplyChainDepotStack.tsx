@@ -20,7 +20,7 @@ const axios = require('axios');
 
 const svgHeight: number = 350;
 
-const DepotStack = (props) => {
+const SupplyChainDepotStack = (props) => {
     /**
      * Setup page for geocode module. 
      * 
@@ -135,4 +135,4 @@ const DepotStack = (props) => {
     );
 };
 
-export default DepotStack;
+export default SupplyChainDepotStack;
