@@ -1,3 +1,7 @@
+/*
+* TODO:
+* - add x2 when second dimension is configured for model
+*/
 const circleStrokeColor: string = "#69b3a2";
 const cicleOpacity: number = .4;
 
@@ -14,7 +18,7 @@ const MapCircle = (props) => {
         stroke={circleStrokeColor}
         strokeWidth={props.size/4}
         fillOpacity={cicleOpacity}>
-            <title>{"lat: " + props.lat + " lon: " + props.lon + " d0: " + props.d0}</title>
+            <title>{"lat: " + props.lat + " lon: " + props.lon + " x1: " + props.d0}</title>
         </circle>
     );
 }
